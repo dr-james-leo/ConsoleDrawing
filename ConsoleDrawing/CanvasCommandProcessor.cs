@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
+using System.Collections;
 
 namespace ConsoleDrawing
 {
@@ -11,18 +12,27 @@ namespace ConsoleDrawing
     {
         public enum ReturnCodes { OK, Error, Stop, Usage};
 
-        private const string CUsage = "C w h - Create a new canvas of width w and height h";
-        private const string LUsage = "L x1 y1 x2 y2 - Add a new line for (x1, y1) to (x2, y2)";
-        private const string RUsage = "R x1 y1 x2 y2 - Add a rectangle whose upper left corner is (x1, y1) and lower right corner is (x2, y2)";
-        private const string BUsage = "B x y c - Fill entire area connect to (x, y) with colour c";
-        private const string DUsage = "D - Displays the current canvas";
-
         protected string _errorString = "";
         protected Canvas canvas;
 
-        public CanvasCommandProcessor(Canvas iCanvas)
+        private Hashtable _commandMap;
+
+        //private CanvasCommand createCanvasCommand;
+        //private CanvasCommand lineCanvasCommand;
+        //private CanvasCommand rectangleCanvasCommand;
+        //private CanvasCommand fillCanvasCommand;
+        //private CanvasCommand displayCanvasCommand;
+
+        public CanvasCommandProcessor(Canvas iCanvas, Hashtable iCommandMap)
         {
             canvas = iCanvas;
+            _commandMap = iCommandMap;
+            //createCanvasCommand = new CreateCanvasCommand(canvas);
+            //lineCanvasCommand = new LineCanvasCommand(canvas);
+            //rectangleCanvasCommand = new RectangleCanvasCommand(canvas);
+            //fillCanvasCommand = new FillCanvasCommand(canvas);
+            //displayCanvasCommand = new DisplayCanvasCommand(canvas);
+
         }
 
         public string Error
@@ -52,39 +62,7 @@ namespace ConsoleDrawing
                 char mainCommand = fullCommand.First<char>();
 
                 switch (mainCommand)
-                {
-                    case 'C':
-                        if (ProcessCreateCanvasCommand(fullCommand))
-                            retCode = ReturnCodes.OK;
-                        else
-                            retCode = ReturnCodes.Error;
-
-                        break;
-
-                    case 'L':
-                        if (ProcessLineCommand(fullCommand))
-                            retCode = ReturnCodes.OK;
-                        else
-                            retCode = ReturnCodes.Error;
-
-                        break;
-
-                    case 'R':
-                        if (ProcessRectangleCommand(fullCommand))
-                            retCode = ReturnCodes.OK;
-                        else
-                            retCode = ReturnCodes.Error;
-                       
-                        break;
-
-                    case 'B':
-                        if (ProcessBucketFillCommand(fullCommand))
-                            retCode = ReturnCodes.OK;
-                        else
-                            retCode = ReturnCodes.Error;
-                     
-                        break;
-
+                {                 
                     case 'Q':
                         retCode = ReturnCodes.Stop;
                         break;
@@ -93,17 +71,20 @@ namespace ConsoleDrawing
                         retCode = ReturnCodes.Usage;
                         break;
 
-                    case 'D':
-                        if (ProcessDCommand(fullCommand))
-                            retCode = ReturnCodes.OK;
-                        else
-                            retCode = ReturnCodes.Error;
-
-                        break;
-
                     default:
-                        retCode = ReturnCodes.Error;
-                        _errorString = fullCommand + " is an unrecognised command.";
+                        CanvasCommand canvasCommand = (CanvasCommand)_commandMap[mainCommand];
+                        if (canvasCommand == null)
+                        {
+                            retCode = ReturnCodes.Error;
+                            _errorString = fullCommand + " is an unrecognised command.";
+                        }
+                        else
+                        {
+                            if (canvasCommand.ProcessCommand(fullCommand))
+                                retCode = ReturnCodes.OK;
+                            else
+                                retCode = ReturnCodes.Error;
+                        }
                         break;
                 }
             }
@@ -118,347 +99,39 @@ namespace ConsoleDrawing
 
         public string GetUsage(string newLineChar)
         {
-            return CUsage + newLineChar + LUsage + newLineChar + RUsage + newLineChar + BUsage + newLineChar + DUsage;
+            //return CUsage + newLineChar + LUsage + newLineChar + RUsage + newLineChar + BUsage + newLineChar + DUsage;
+            return "";
         }
 
-        // Return true if parameters are ok or false if not
-        private bool isNumberOfParametersOK(string fullCommand, int numberOfParameters, string correctCommandUsage)
-        {
-            _errorString = "";
+        //// Return true if parameters are ok or false if not
+        //private bool isNumberOfParametersOK(string fullCommand, int numberOfParameters, string correctCommandUsage)
+        //{
+        //    _errorString = "";
 
-            try
-            {
-                string pattern = @"\s+";
-                string[] elements = Regex.Split(fullCommand, pattern);
+        //    try
+        //    {
+        //        string pattern = @"\s+";
+        //        string[] elements = Regex.Split(fullCommand, pattern);
 
-                if (elements.Length < numberOfParameters)
-                {
-                    _errorString = "Too few parameters. Usage is " + correctCommandUsage + ".";
-                    return false;
-                }
+        //        if (elements.Length < numberOfParameters)
+        //        {
+        //            _errorString = "Too few parameters. Usage is " + correctCommandUsage + ".";
+        //            return false;
+        //        }
 
-                if (elements.Length > numberOfParameters)
-                {
-                    _errorString = "Too many parameters. Usage is " + correctCommandUsage + ".";
-                    return false;
-                }
+        //        if (elements.Length > numberOfParameters)
+        //        {
+        //            _errorString = "Too many parameters. Usage is " + correctCommandUsage + ".";
+        //            return false;
+        //        }
 
-                return true;
-            }
-            catch(Exception ex)
-            {
-                _errorString = "An error ocurred: " + ex.Message;
-                return false;
-            }
-        }
-
-        // Return true is successful and false on error
-        private bool ProcessDCommand(string fullCommand)
-        {
-            _errorString = "";
-
-            try
-            {
-                if (!isNumberOfParametersOK(fullCommand, 1, DUsage))
-                    return false;
-
-                if (!canvas.Display())
-                {
-                    _errorString = canvas.Error;
-                    return false;
-                }
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                _errorString = "An error ocurred: " + ex.Message;
-                return false;
-            }
-        }
-
-        // Return true is successful and false on error
-        private bool ProcessBucketFillCommand(string fullCommand)
-        {
-            _errorString = "";
-
-            try
-            {
-                if (!isNumberOfParametersOK(fullCommand, 4, BUsage))
-                    return false;
-
-                string pattern = @"\s+";
-                string[] elements = Regex.Split(fullCommand, pattern);
-
-                int x;
-                if (!int.TryParse(elements[1], out x))
-                {
-                    _errorString = "First parameter must be an integer specifying x.";
-                    return false;
-                }
-
-                int y;
-                if (!int.TryParse(elements[2], out y))
-                {
-                    _errorString = "Second parameter must be an integer specifying y.";
-                    return false;
-                }
-
-                string colour;
-                if (elements[3].Length > 1)
-                {
-                    _errorString = "Third parameter must be a single character specifying the colour.";
-                    return false;
-                }
-                else
-                    colour = elements[3];
-
-                if (!canvas.Fill(x, y, colour))
-                {
-                    _errorString = canvas.Error;
-                    return false;
-                }
-
-                if (!canvas.Display())
-                {
-                    _errorString = canvas.Error;
-                    return false;
-                }
-
-                return true;
-            }
-            catch(Exception ex)
-            {
-                _errorString = "An error ocurred: " + ex.Message;
-                return false;
-            }
-        }
-
-        // Return true is successful and false on error
-        private bool ProcessRectangleCommand(string fullCommand)
-        {
-            _errorString = "";
-
-            try
-            {
-                if (!isNumberOfParametersOK(fullCommand, 5, RUsage))
-                    return false;
-
-                string pattern = @"\s+";
-                string[] elements = Regex.Split(fullCommand, pattern);
-
-                int x1;
-                if (!int.TryParse(elements[1], out x1))
-                {
-                    _errorString = "First parameter must be an integer specifying x1.";
-                    return false;
-                }
-
-                int y1;
-                if (!int.TryParse(elements[2], out y1))
-                {
-                    _errorString = "Second parameter must be an integer specifying y1.";
-                    return false;
-                }
-
-                int x2;
-                if (!int.TryParse(elements[3], out x2))
-                {
-                    _errorString = "First parameter must be an integer specifying x2.";
-                    return false;
-                }
-
-                int y2;
-                if (!int.TryParse(elements[4], out y2))
-                {
-                    _errorString = "Second parameter must be an integer specifying y2.";
-                    return false;
-                }
-
-                if(x2 < x1)
-                {
-                    _errorString = "x2 must be greater than x1.";
-                    return false;
-                }
-
-                if(y2 < y1)
-                {
-                    _errorString = "y2 must be greater than y1.";
-                    return false;
-                }
-
-                int rectangleWidth = x2 - x1 + 1;
-                int rectangleHeight = y2 - y1 + 1;
-                if (!canvas.AddRectangle(x1, y1, rectangleWidth, rectangleHeight))
-                {
-                    _errorString = canvas.Error;
-                    return false;
-                }                   
-
-                if (!canvas.Display())
-                {
-                    _errorString = canvas.Error;
-                    return false;
-                }
-
-                return true;
-            }
-            catch(Exception ex)
-            {
-                _errorString = "An error ocurred: " + ex.Message;
-                return true;
-            }
-        }
-
-        // Return true is successful and false on error
-        private bool ProcessLineCommand(string fullCommand)
-        {
-            _errorString = "";
-
-            try
-            {
-                if (!isNumberOfParametersOK(fullCommand, 5, LUsage))
-                    return false;
-
-                string pattern = @"\s+";
-                string[] elements = Regex.Split(fullCommand, pattern);
-
-                int x1;
-                if (!int.TryParse(elements[1], out x1))
-                {
-                    _errorString = "First parameter must be an integer specifying x1.";
-                    return false;
-                }
-
-                int y1;
-                if (!int.TryParse(elements[2], out y1))
-                {
-                    _errorString = "Second parameter must be an integer specifying y1.";
-                    return false;
-                }
-
-                int x2;
-                if (!int.TryParse(elements[3], out x2))
-                {
-                    _errorString = "First parameter must be an integer specifying x2.";
-                    return false;
-                }
-
-                int y2;
-                if (!int.TryParse(elements[4], out y2))
-                {
-                    _errorString = "Second parameter must be an integer specifying y2.";
-                    return false;
-                }
-
-                int length;
-                if (y1 == y2)
-                {
-                    int x = x1;
-                    if (x1 > x2)
-                        x = x2;
-                    length = Math.Abs(x2 - x1) + 1;
-                    if (!canvas.AddHorizontalLine(x, y1, length))
-                    {
-                        _errorString = canvas.Error;
-                        return false;
-                    }
-                }
-                else
-                {
-                    if (x1 == x2)
-                    {
-                        int y = y1;
-                        if (y1 > y2)
-                            y = y2;
-                        length = Math.Abs(y2 - y1) + 1;
-                        if (!canvas.AddVerticalLine(x1, y, length))
-                        {
-                            _errorString = canvas.Error;
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        _errorString = "Either x1 must equal x2 for a vertical line or y1 must equal y2 for a horizontal line.";
-                        return false;
-                    }
-                }
-
-                if(!canvas.Display())
-                {
-                    _errorString = canvas.Error;
-                    return false;
-                }
-
-                return true;
-            }
-            catch(Exception ex)
-            {
-                _errorString = "An error ocurred: " + ex.Message;
-                return false;
-            }
-        }
-
-        // Return true is successful and false on error
-        private bool ProcessCreateCanvasCommand(string fullCommand)
-        {
-            _errorString = "";
-
-            try
-            {
-                if (!isNumberOfParametersOK(fullCommand, 3, CUsage))
-                    return false;
-
-                string pattern = @"\s+";
-                string[] elements = Regex.Split(fullCommand, pattern);
-
-                int requestedWidth;
-                if (!int.TryParse(elements[1], out requestedWidth))
-                {
-                    _errorString = "First parameter must be an integer specifying the width.";
-                    return false;
-                }
-
-                if(requestedWidth < 1)
-                {
-                    _errorString = "Width of canvas must be at least 1.";
-                    return false;
-                }
-
-                int requestedHeight;
-                if (!int.TryParse(elements[2], out requestedHeight))
-                {
-                    _errorString = "Second parameter must be an integer specifying the height.";
-                    return false;
-                }
-
-                if(requestedHeight < 1)
-                {
-                    _errorString = "Height of canvas must be at least 1.";
-                    return false;
-                }
-                
-                // If this line has been reached then parameters are good.
-                if (!canvas.Create(requestedWidth, requestedHeight))
-                {
-                    _errorString = canvas.Error;
-                    return false;
-                }
-
-                if(!canvas.Display())
-                {
-                    _errorString = canvas.Error;
-                    return false;
-                }
-
-                return true;
-            }
-            catch(Exception ex)
-            {
-                _errorString = "An error ocurred: " + ex.Message;
-                return false;
-            }
-        }
+        //        return true;
+        //    }
+        //    catch(Exception ex)
+        //    {
+        //        _errorString = "An error ocurred: " + ex.Message;
+        //        return false;
+        //    }
+        //}  
     }
 }

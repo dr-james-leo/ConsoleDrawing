@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,7 @@ namespace ConsoleDrawing
 {
     public class ConsoleCanvasCommandProcessor: CanvasCommandProcessor
     {
-        public ConsoleCanvasCommandProcessor(Canvas canvas): base(canvas)
+        public ConsoleCanvasCommandProcessor(Canvas canvas, Hashtable iCommandMap) : base(canvas, iCommandMap)
         {
         }
 

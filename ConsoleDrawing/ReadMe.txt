@@ -85,3 +85,12 @@ even though the input is via a console, Display() could be implemented for writi
 
 For testing purposes, TestCanvas is subclassed off of Canvas to display the string that is created for rendering 
 purposes.  This string can be tested against the expected string to ensure the Canvas class is working correctly.
+
+
+Large canvas size?
+Command history - could be big
+Random mode running commands
+Complex shapes
+Min size
+Clear canvas
+

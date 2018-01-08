@@ -43,11 +43,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Canvas.cs" />
+    <Compile Include="CanvasCommand.cs" />
     <Compile Include="CanvasCommandProcessor.cs" />
+    <Compile Include="CreateCanvasCommand.cs" />
     <Compile Include="ConsoleCanvas.cs" />
     <Compile Include="ConsoleCanvasCommandProcessor.cs" />
+    <Compile Include="DisplayCanvasCommand.cs" />
+    <Compile Include="FillCanvasCommand.cs" />
+    <Compile Include="LineCanvasCommand.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RectangleCanvasCommand.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
