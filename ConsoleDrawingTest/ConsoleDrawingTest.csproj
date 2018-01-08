@@ -50,6 +50,7 @@
   <ItemGroup>
     <Compile Include="CanvasConsoleTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestCanvas.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

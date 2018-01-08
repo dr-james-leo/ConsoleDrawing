@@ -20,11 +20,11 @@ namespace ConsoleDrawing
 
                 string inputString = Console.ReadLine();
 
-                int retCode = ProcessInputLine(inputString);
-                if (retCode == 0)
+                ReturnCodes retCode = ProcessInputLine(inputString);
+                if (retCode == ReturnCodes.Stop)
                     break;
 
-                if (retCode == -1)
+                if (retCode == ReturnCodes.Error)
                 {
                     Console.WriteLine(_errorString);
                     _errorString = "";

@@ -54,8 +54,8 @@ namespace ConsoleDrawing
         }
 
         // Creates a new Canvas to draw on
-        // Return 1 is successful and -1 on error
-        public int Create(int requiredWidth, int requiredHeight)
+        // Return true is successful and false on error
+        public bool Create(int requiredWidth, int requiredHeight)
         {
             _errorString = "";
 
@@ -64,13 +64,13 @@ namespace ConsoleDrawing
                 if(requiredHeight > _maxHeight)
                 {
                     _errorString = "Maximum height of " + _maxHeight + " exceeded.";
-                    return -1;
+                    return false;
                 }
 
                 if (requiredWidth > _maxWidth)
                 {
                     _errorString = "Maximum width of " + _maxWidth + " exceeded.";
-                    return -1;
+                    return false;
                 }
 
                 _width = requiredWidth;
@@ -79,50 +79,50 @@ namespace ConsoleDrawing
                 _canvasData = new int[_width, _height];
                 _colourMap = new Hashtable();
                 hasCanvasBeenCreated = true;
-                return 1;
+                return true;
             }
             catch(Exception ex)
             {
                 _errorString = "An error ocurred: " + ex.Message;
-                return -1;
+                return false;
             }
         }
 
         // Checks that an inital canvas has been created and the values of x and y are within the canvas space
-        // Returns 1 on success and -1 on error
-        private int SanityCheck(int x, int y)
+        // Return true is successful and false on error
+        private bool SanityCheck(int x, int y)
         {
             if (hasCanvasBeenCreated == false)
             {
                 _errorString = "Please create a canvas first.";
-                return -1;
+                return false;
             }
 
             if (x < 1 || x > _width)
             {
                 _errorString = "x must be between 1 and " + _width + ".";
-                return -1;
+                return false;
             }
 
             if (y < 1 || y > _height)
             {
                 _errorString = "y must be between 1 and " + _height + ".";
-                return -1;
+                return false;
             }
 
-            return 1;
+            return true;
         }
 
         // Fills the canvas with the specified colour from position x,y
-        // Returns 1 on success and -1 on error
-        public int Fill(int x, int y, string colour)
+        // Return true is successful and false on error
+        public bool Fill(int x, int y, string colour)
         {
             _errorString = "";
 
             try
             {
-                if(SanityCheck(x, y) == -1)
-                    return -1;
+                if(!SanityCheck(x, y))
+                    return false;
 
                 int colourKey;
 
@@ -137,44 +137,44 @@ namespace ConsoleDrawing
                     _colourMap.Add(colourKey, colour);
                 }
 
-                if (FillCell(x, y, colourKey) == -1)
-                    return -1;
+                if (!FillCell(x, y, colourKey))
+                    return false;
 
-                return 1;
+                return true;
             }
             catch(Exception ex)
             {
                 _errorString = "An error ocurred: " + ex.Message;
-                return -1;
+                return false;
             }
         }
 
         // Used to fill the 4 neighbours of a cell, above, below, left and right
-        // Returns 1 on success and -1 on error
-        private int FillNeighbours(int x, int y, int colourKey)
+        // Return true is successful and false on error
+        private bool FillNeighbours(int x, int y, int colourKey)
         {
             _errorString = "";
 
             try
             {
-                if (FillCell(x + 1, y, colourKey) == -1)
-                    return -1;
+                if (!FillCell(x + 1, y, colourKey))
+                    return false;
 
-                if (FillCell(x - 1, y, colourKey) == -1)
-                    return -1;
+                if (!FillCell(x - 1, y, colourKey))
+                    return false;
 
-                if (FillCell(x, y + 1, colourKey) == -1)
-                    return -1;
+                if (!FillCell(x, y + 1, colourKey))
+                    return false;
 
-                if (FillCell(x, y - 1, colourKey) == -1)
-                    return -1;
+                if (!FillCell(x, y - 1, colourKey))
+                    return false;
 
-                return 1;
+                return true;
             }
             catch(Exception ex)
             {
                 _errorString = "An error ocurred: " + ex.Message;
-                return -1;
+                return false;
             }
         }
 
@@ -188,8 +188,8 @@ namespace ConsoleDrawing
         }
 
         // Fills a cell with the specified colour and then tries to fill neighbours
-        // Returns 1 on success and -1 on error
-        private int FillCell(int x, int y, int colourKey)
+        // Return true is successful and false on error
+        private bool FillCell(int x, int y, int colourKey)
         {
             _errorString = "";
 
@@ -198,91 +198,91 @@ namespace ConsoleDrawing
                 if (isWithinBounds(x, y) && _canvasData[x - 1, y - 1] == 0)
                 {
                     _canvasData[x - 1, y - 1] = colourKey;
-                    if (FillNeighbours(x, y, colourKey) == -1)
-                        return -1;
+                    if (!FillNeighbours(x, y, colourKey))
+                        return false;
                 }
-                return 1;
+                return true;
             }
             catch(Exception ex)
             {
                 _errorString = "An error ocurred: " + ex.Message;
-                return -1;
+                return false;
             }
         }
 
-        // Returns 1 on success and -1 on error
-        public int AddRectangle(int x, int y, int width, int height)
+        // Return true is successful and false on error
+        public bool AddRectangle(int x, int y, int width, int height)
         {
             _errorString = "";
 
             try
             {
-                if (SanityCheck(x, y) == -1)
-                    return -1;
+                if (!SanityCheck(x, y))
+                    return false;
 
-                if (AddHorizontalLine(x, y, width) == -1)
-                    return -1;
+                if (!AddHorizontalLine(x, y, width))
+                    return false;
 
-                if (AddVerticalLine(x, y, height) == -1)
-                    return -1;
+                if (!AddVerticalLine(x, y, height))
+                    return false;
 
-                if (AddVerticalLine(x + width - 1, y, height) == -1)
-                    return -1;
+                if (!AddVerticalLine(x + width - 1, y, height))
+                    return false;
 
-                if (AddHorizontalLine(x, y + height - 1, width) == -1)
-                    return -1;
+                if (!AddHorizontalLine(x, y + height - 1, width))
+                    return false;
 
-                return 1;
+                return true;
             }
             catch(Exception ex)
             {
                 _errorString = "An error ocurred: " + ex.Message;
-                return -1;
+                return false;
             }
         }
 
-        // Returns 1 on success and -1 on error
-        public int AddHorizontalLine(int x, int y, int length)
+        // Return true is successful and false on error
+        public bool AddHorizontalLine(int x, int y, int length)
         {
             _errorString = "";
 
             try
             {
-                if (SanityCheck(x, y) == -1)
-                    return -1;
+                if (!SanityCheck(x, y))
+                    return false;
 
                 if ((x + length - 1) > _width)
                 {
                     _errorString = "Length of line too long.";
-                    return -1;
+                    return false;
                 }
 
                 for (int i = 0; i < length; i++)
                     _canvasData[x - 1 + i, y - 1] = 1;
                 
-                return 1;
+                return true;
             }
             catch(Exception ex)
             {
                 _errorString = "An error ocurred: " + ex.Message;
-                return -1;
+                return false;
             }
         }
 
-        // Returns 1 on success and -1 on error
-        public int AddVerticalLine(int x, int y, int length)
+        // Return true is successful and false on error
+        public bool AddVerticalLine(int x, int y, int length)
         {
             _errorString = "";
 
             try
             {
-                if (SanityCheck(x, y) == -1)
-                    return -1;
+                if (!SanityCheck(x, y))
+                    return false;
 
                 if ((y + length - 1) > _height)
                 {
                     _errorString = "Length of line too long.";
-                    return -1;
+                    return false;
                 }
 
                 for (int j = 0; j < length; j++)
@@ -290,20 +290,20 @@ namespace ConsoleDrawing
                     _canvasData[x - 1, y - 1 + j] = 1;
                 }
 
-                return 1;
+                return true;
             }
             catch(Exception ex)
             {
                 _errorString = "An error ocurred: " + ex.Message;
-                return -1;
+                return false;
             }
         }
 
         // Implement for the particular display being used
-        abstract public int Display();
+        abstract public bool Display();
      
         // Returns an empty string on error and sets _errorString;
-        public string RenderToString(string newLineChar)
+        protected string RenderToString(string newLineChar)
         {
             _errorString = "";
 

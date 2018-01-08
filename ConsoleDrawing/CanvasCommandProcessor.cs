@@ -9,6 +9,8 @@ namespace ConsoleDrawing
 {
     abstract public class CanvasCommandProcessor
     {
+        public enum ReturnCodes { OK, Error, Stop};
+
         protected string _errorString = "";
         protected Canvas canvas;
 
@@ -26,9 +28,9 @@ namespace ConsoleDrawing
         abstract public void ProcessInputs();
 
         // Returns 1 to continue, 0 to quit or -1 if error
-        public int ProcessInputLine(string fullCommand)
+        public ReturnCodes ProcessInputLine(string fullCommand)
         {
-            int retCode = 1;
+            ReturnCodes retCode = ReturnCodes.OK;
             _errorString = "";
 
             try
@@ -38,35 +40,51 @@ namespace ConsoleDrawing
                 if(fullCommand.Length == 0)
                 {
                     _errorString = "Please enter a command.";
-                    return -1;
+                    return ReturnCodes.Error;
                 }
 
                 char mainCommand = fullCommand.First<char>();
 
                 switch (mainCommand)
                 {
-                    case 'C':   
-                        retCode = ProcessCreateCanvasCommand(fullCommand);
+                    case 'C':
+                        if (ProcessCreateCanvasCommand(fullCommand))
+                            retCode = ReturnCodes.OK;
+                        else
+                            retCode = ReturnCodes.Error;
+
                         break;
 
                     case 'L':
-                        retCode = ProcessLineCommand(fullCommand);
+                        if (ProcessLineCommand(fullCommand))
+                            retCode = ReturnCodes.OK;
+                        else
+                            retCode = ReturnCodes.Error;
+
                         break;
 
                     case 'R':
-                        retCode = ProcessRectangleCommand(fullCommand);
+                        if (ProcessRectangleCommand(fullCommand))
+                            retCode = ReturnCodes.OK;
+                        else
+                            retCode = ReturnCodes.Error;
+                       
                         break;
 
                     case 'B':
-                        retCode = ProcessBucketFillCommand(fullCommand);
+                        if (ProcessBucketFillCommand(fullCommand))
+                            retCode = ReturnCodes.OK;
+                        else
+                            retCode = ReturnCodes.Error;
+                     
                         break;
 
                     case 'Q':
-                        retCode = 0;
+                        retCode = ReturnCodes.Stop;
                         break;
 
                     default:
-                        retCode = -1;
+                        retCode = ReturnCodes.Error;
                         _errorString = fullCommand + " is an unrecognised command.";
                         break;
                 }
@@ -74,14 +92,14 @@ namespace ConsoleDrawing
             catch(Exception ex)
             {
                 _errorString = "An error ocurred: " + ex.Message;
-                retCode = -1;
+                retCode = ReturnCodes.Error;
             }
 
             return retCode;
         }
 
-        // Return 1 if parameters are ok or -1 if not
-        private int CheckNumberOfParameters(string fullCommand, int numberOfParameters, string correctCommandUsage)
+        // Return true if parameters are ok or false if not
+        private bool isNumberOfParametersOK(string fullCommand, int numberOfParameters, string correctCommandUsage)
         {
             _errorString = "";
 
@@ -93,33 +111,33 @@ namespace ConsoleDrawing
                 if (elements.Length < numberOfParameters)
                 {
                     _errorString = "Too few parameters. Usage is " + correctCommandUsage + ".";
-                    return -1;
+                    return false;
                 }
 
                 if (elements.Length > numberOfParameters)
                 {
                     _errorString = "Too many parameters. Usage is " + correctCommandUsage + ".";
-                    return -1;
+                    return false;
                 }
 
-                return 1;
+                return true;
             }
             catch(Exception ex)
             {
                 _errorString = "An error ocurred: " + ex.Message;
-                return -1;
+                return false;
             }
         }
 
-        // Returns 1 on success or -1 on error
-        private int ProcessBucketFillCommand(string fullCommand)
+        // Return true is successful and false on error
+        private bool ProcessBucketFillCommand(string fullCommand)
         {
             _errorString = "";
 
             try
             {
-                if (CheckNumberOfParameters(fullCommand, 4, "B x y c") == -1)
-                    return -1;
+                if (!isNumberOfParametersOK(fullCommand, 4, "B x y c"))
+                    return false;
 
                 string pattern = @"\s+";
                 string[] elements = Regex.Split(fullCommand, pattern);
@@ -128,55 +146,55 @@ namespace ConsoleDrawing
                 if (!int.TryParse(elements[1], out x))
                 {
                     _errorString = "First parameter must be an integer specifying x.";
-                    return -1;
+                    return false;
                 }
 
                 int y;
                 if (!int.TryParse(elements[2], out y))
                 {
                     _errorString = "Second parameter must be an integer specifying y.";
-                    return -1;
+                    return false;
                 }
 
                 string colour;
                 if (elements[3].Length > 1)
                 {
                     _errorString = "Third parameter must be a single character specifying the colour.";
-                    return -1;
+                    return false;
                 }
                 else
                     colour = elements[3];
 
-                if (canvas.Fill(x, y, colour) == -1)
+                if (!canvas.Fill(x, y, colour))
                 {
                     _errorString = canvas.Error;
-                    return -1;
+                    return false;
                 }
 
-                if (canvas.Display() == -1)
+                if (!canvas.Display())
                 {
                     _errorString = canvas.Error;
-                    return -1;
+                    return false;
                 }
 
-                return 1;
+                return true;
             }
             catch(Exception ex)
             {
                 _errorString = "An error ocurred: " + ex.Message;
-                return -1;
+                return false;
             }
         }
 
-        // Returns 1 on success or -1 on error
-        private int ProcessRectangleCommand(string fullCommand)
+        // Return true is successful and false on error
+        private bool ProcessRectangleCommand(string fullCommand)
         {
             _errorString = "";
 
             try
             {
-                if (CheckNumberOfParameters(fullCommand, 5, "R x1 y1 x2 y2") == -1)
-                    return -1;
+                if (!isNumberOfParametersOK(fullCommand, 5, "R x1 y1 x2 y2"))
+                    return false;
 
                 string pattern = @"\s+";
                 string[] elements = Regex.Split(fullCommand, pattern);
@@ -185,74 +203,74 @@ namespace ConsoleDrawing
                 if (!int.TryParse(elements[1], out x1))
                 {
                     _errorString = "First parameter must be an integer specifying x1.";
-                    return -1;
+                    return false;
                 }
 
                 int y1;
                 if (!int.TryParse(elements[2], out y1))
                 {
                     _errorString = "Second parameter must be an integer specifying y1.";
-                    return -1;
+                    return false;
                 }
 
                 int x2;
                 if (!int.TryParse(elements[3], out x2))
                 {
                     _errorString = "First parameter must be an integer specifying x2.";
-                    return -1;
+                    return false;
                 }
 
                 int y2;
                 if (!int.TryParse(elements[4], out y2))
                 {
                     _errorString = "Second parameter must be an integer specifying y2.";
-                    return -1;
+                    return false;
                 }
 
                 if(x2 < x1)
                 {
                     _errorString = "x2 must be greater than x1.";
-                    return -1;
+                    return false;
                 }
 
                 if(y2 < y1)
                 {
                     _errorString = "y2 must be greater than y1.";
-                    return -1;
+                    return false;
                 }
 
                 int rectangleWidth = x2 - x1 + 1;
                 int rectangleHeight = y2 - y1 + 1;
-                if (canvas.AddRectangle(x1, y1, rectangleWidth, rectangleHeight) == -1)
+                if (!canvas.AddRectangle(x1, y1, rectangleWidth, rectangleHeight))
                 {
                     _errorString = canvas.Error;
-                    return -1;
+                    return false;
                 }                   
 
-                if (canvas.Display() == -1)
+                if (!canvas.Display())
                 {
                     _errorString = canvas.Error;
-                    return -1;
+                    return false;
                 }
 
-                return 1;
+                return true;
             }
             catch(Exception ex)
             {
                 _errorString = "An error ocurred: " + ex.Message;
-                return -1;
+                return true;
             }
         }
 
-        // Returns 1 on success or -1 on error
-        private int ProcessLineCommand(string fullCommand)
+        // Return true is successful and false on error
+        private bool ProcessLineCommand(string fullCommand)
         {
             _errorString = "";
 
             try
             {
-                if (CheckNumberOfParameters(fullCommand, 5, "L x1 y1 x2 y2") == -1)
-                    return -1;
+                if (!isNumberOfParametersOK(fullCommand, 5, "L x1 y1 x2 y2"))
+                    return false;
 
                 string pattern = @"\s+";
                 string[] elements = Regex.Split(fullCommand, pattern);
@@ -261,28 +279,28 @@ namespace ConsoleDrawing
                 if (!int.TryParse(elements[1], out x1))
                 {
                     _errorString = "First parameter must be an integer specifying x1.";
-                    return -1;
+                    return false;
                 }
 
                 int y1;
                 if (!int.TryParse(elements[2], out y1))
                 {
                     _errorString = "Second parameter must be an integer specifying y1.";
-                    return -1;
+                    return false;
                 }
 
                 int x2;
                 if (!int.TryParse(elements[3], out x2))
                 {
                     _errorString = "First parameter must be an integer specifying x2.";
-                    return -1;
+                    return false;
                 }
 
                 int y2;
                 if (!int.TryParse(elements[4], out y2))
                 {
                     _errorString = "Second parameter must be an integer specifying y2.";
-                    return -1;
+                    return false;
                 }
 
                 int length;
@@ -292,10 +310,10 @@ namespace ConsoleDrawing
                     if (x1 > x2)
                         x = x2;
                     length = Math.Abs(x2 - x1) + 1;
-                    if (canvas.AddHorizontalLine(x, y1, length) == -1)
+                    if (!canvas.AddHorizontalLine(x, y1, length))
                     {
                         _errorString = canvas.Error;
-                        return -1;
+                        return false;
                     }
                 }
                 else
@@ -306,43 +324,43 @@ namespace ConsoleDrawing
                         if (y1 > y2)
                             y = y2;
                         length = Math.Abs(y2 - y1) + 1;
-                        if (canvas.AddVerticalLine(x1, y, length) == -1)
+                        if (!canvas.AddVerticalLine(x1, y, length))
                         {
                             _errorString = canvas.Error;
-                            return -1;
+                            return false;
                         }
                     }
                     else
                     {
                         _errorString = "Either x1 must equal x2 for a vertical line or y1 must equal y2 for a horizontal line.";
-                        return -1;
+                        return false;
                     }
                 }
 
-                if(canvas.Display() == -1)
+                if(!canvas.Display())
                 {
                     _errorString = canvas.Error;
-                    return -1;
+                    return false;
                 }
 
-                return 1;
+                return true;
             }
             catch(Exception ex)
             {
                 _errorString = "An error ocurred: " + ex.Message;
-                return -1;
+                return false;
             }
         }
 
-        // Returns 1 on success or -1 on error
-        private int ProcessCreateCanvasCommand(string fullCommand)
+        // Return true is successful and false on error
+        private bool ProcessCreateCanvasCommand(string fullCommand)
         {
             _errorString = "";
 
             try
             {
-                if (CheckNumberOfParameters(fullCommand, 3, "C w h") == -1)
-                    return -1;
+                if (!isNumberOfParametersOK(fullCommand, 3, "C w h"))
+                    return false;
 
                 string pattern = @"\s+";
                 string[] elements = Regex.Split(fullCommand, pattern);
@@ -351,47 +369,47 @@ namespace ConsoleDrawing
                 if (!int.TryParse(elements[1], out requestedWidth))
                 {
                     _errorString = "First parameter must be an integer specifying the width.";
-                    return -1;
+                    return false;
                 }
 
                 if(requestedWidth < 1)
                 {
                     _errorString = "Width of canvas must be at least 1.";
-                    return -1;
+                    return false;
                 }
 
                 int requestedHeight;
                 if (!int.TryParse(elements[2], out requestedHeight))
                 {
                     _errorString = "Second parameter must be an integer specifying the height.";
-                    return -1;
+                    return false;
                 }
 
                 if(requestedHeight < 1)
                 {
                     _errorString = "Height of canvas must be at least 1.";
-                    return -1;
+                    return false;
                 }
                 
                 // If this line has been reached then parameters are good.
-                if (canvas.Create(requestedWidth, requestedHeight) == -1)
+                if (!canvas.Create(requestedWidth, requestedHeight))
                 {
                     _errorString = canvas.Error;
-                    return -1;
+                    return false;
                 }
 
-                if(canvas.Display() == -1)
+                if(!canvas.Display())
                 {
                     _errorString = canvas.Error;
-                    return -1;
+                    return false;
                 }
 
-                return 1;
+                return true;
             }
             catch(Exception ex)
             {
                 _errorString = "An error ocurred: " + ex.Message;
-                return -1;
+                return false;
             }
         }
     }

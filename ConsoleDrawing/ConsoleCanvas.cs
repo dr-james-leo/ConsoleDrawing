@@ -20,14 +20,14 @@ namespace ConsoleDrawing
         {
         }
 
-        public override int Display()
+        public override bool Display()
         {
             string canvasAsString = RenderToString("\n");
             if (canvasAsString.Length == 0)
-                return -1;
+                return false;
 
             Console.WriteLine(canvasAsString);
-            return 1;
+            return true;
         }
     }
 }
