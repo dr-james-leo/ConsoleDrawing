@@ -32,12 +32,14 @@ namespace ConsoleDrawing
         {
         }
 
+        // Allows overriding the default values for the maximum size of the canvas
         public Canvas(int maxWidth, int maxHeight)
         {
             _maxWidth = maxWidth;
             _maxHeight = maxHeight;
         }
 
+        // Allows overriding the defaults values for the maximum size of the canvas and the characters used to draw the canvas
         public Canvas(char spaceChar, char lineChar, char topAndBottomEdgeChar, char leftAndRightEdgeChar, int maxWidth, int maxHeight)
         {
             _spaceChar = spaceChar;
@@ -90,9 +92,9 @@ namespace ConsoleDrawing
 
         // Checks that an inital canvas has been created and the values of x and y are within the canvas space
         // Return true is successful and false on error
-        private bool SanityCheck(int x, int y)
+        private bool UndertakeSanityCheck(int x, int y)
         {
-            if (hasCanvasBeenCreated == false)
+            if (!hasCanvasBeenCreated)
             {
                 _errorString = "Please create a canvas first.";
                 return false;
@@ -121,7 +123,7 @@ namespace ConsoleDrawing
 
             try
             {
-                if(!SanityCheck(x, y))
+                if(!UndertakeSanityCheck(x, y))
                     return false;
 
                 int colourKey;
@@ -217,7 +219,7 @@ namespace ConsoleDrawing
 
             try
             {
-                if (!SanityCheck(x, y))
+                if (!UndertakeSanityCheck(x, y))
                     return false;
 
                 if (!AddHorizontalLine(x, y, width))
@@ -248,7 +250,7 @@ namespace ConsoleDrawing
 
             try
             {
-                if (!SanityCheck(x, y))
+                if (!UndertakeSanityCheck(x, y))
                     return false;
 
                 if ((x + length - 1) > _width)
@@ -276,7 +278,7 @@ namespace ConsoleDrawing
 
             try
             {
-                if (!SanityCheck(x, y))
+                if (!UndertakeSanityCheck(x, y))
                     return false;
 
                 if ((y + length - 1) > _height)
@@ -309,6 +311,12 @@ namespace ConsoleDrawing
 
             try
             {
+                if (!hasCanvasBeenCreated)
+                {
+                    _errorString = "Please create a canvas first.";
+                    return "";
+                }
+
                 StringBuilder displayString = new StringBuilder("");
 
                 // Render the top line

@@ -9,7 +9,13 @@ namespace ConsoleDrawing
 {
     abstract public class CanvasCommandProcessor
     {
-        public enum ReturnCodes { OK, Error, Stop};
+        public enum ReturnCodes { OK, Error, Stop, Usage};
+
+        private const string CUsage = "C w h - Create a new canvas of width w and height h";
+        private const string LUsage = "L x1 y1 x2 y2 - Add a new line for (x1, y1) to (x2, y2)";
+        private const string RUsage = "R x1 y1 x2 y2 - Add a rectangle whose upper left corner is (x1, y1) and lower right corner is (x2, y2)";
+        private const string BUsage = "B x y c - Fill entire area connect to (x, y) with colour c";
+        private const string DUsage = "D - Displays the current canvas";
 
         protected string _errorString = "";
         protected Canvas canvas;
@@ -83,6 +89,18 @@ namespace ConsoleDrawing
                         retCode = ReturnCodes.Stop;
                         break;
 
+                    case '?':
+                        retCode = ReturnCodes.Usage;
+                        break;
+
+                    case 'D':
+                        if (ProcessDCommand(fullCommand))
+                            retCode = ReturnCodes.OK;
+                        else
+                            retCode = ReturnCodes.Error;
+
+                        break;
+
                     default:
                         retCode = ReturnCodes.Error;
                         _errorString = fullCommand + " is an unrecognised command.";
@@ -96,6 +114,11 @@ namespace ConsoleDrawing
             }
 
             return retCode;
+        }
+
+        public string GetUsage(string newLineChar)
+        {
+            return CUsage + newLineChar + LUsage + newLineChar + RUsage + newLineChar + BUsage + newLineChar + DUsage;
         }
 
         // Return true if parameters are ok or false if not
@@ -130,13 +153,38 @@ namespace ConsoleDrawing
         }
 
         // Return true is successful and false on error
+        private bool ProcessDCommand(string fullCommand)
+        {
+            _errorString = "";
+
+            try
+            {
+                if (!isNumberOfParametersOK(fullCommand, 1, DUsage))
+                    return false;
+
+                if (!canvas.Display())
+                {
+                    _errorString = canvas.Error;
+                    return false;
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _errorString = "An error ocurred: " + ex.Message;
+                return false;
+            }
+        }
+
+        // Return true is successful and false on error
         private bool ProcessBucketFillCommand(string fullCommand)
         {
             _errorString = "";
 
             try
             {
-                if (!isNumberOfParametersOK(fullCommand, 4, "B x y c"))
+                if (!isNumberOfParametersOK(fullCommand, 4, BUsage))
                     return false;
 
                 string pattern = @"\s+";
@@ -193,7 +241,7 @@ namespace ConsoleDrawing
 
             try
             {
-                if (!isNumberOfParametersOK(fullCommand, 5, "R x1 y1 x2 y2"))
+                if (!isNumberOfParametersOK(fullCommand, 5, RUsage))
                     return false;
 
                 string pattern = @"\s+";
@@ -269,7 +317,7 @@ namespace ConsoleDrawing
 
             try
             {
-                if (!isNumberOfParametersOK(fullCommand, 5, "L x1 y1 x2 y2"))
+                if (!isNumberOfParametersOK(fullCommand, 5, LUsage))
                     return false;
 
                 string pattern = @"\s+";
@@ -359,7 +407,7 @@ namespace ConsoleDrawing
 
             try
             {
-                if (!isNumberOfParametersOK(fullCommand, 3, "C w h"))
+                if (!isNumberOfParametersOK(fullCommand, 3, CUsage))
                     return false;
 
                 string pattern = @"\s+";

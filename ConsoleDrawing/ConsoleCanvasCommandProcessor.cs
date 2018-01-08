@@ -21,6 +21,7 @@ namespace ConsoleDrawing
                 string inputString = Console.ReadLine();
 
                 ReturnCodes retCode = ProcessInputLine(inputString);
+                
                 if (retCode == ReturnCodes.Stop)
                     break;
 
@@ -28,6 +29,11 @@ namespace ConsoleDrawing
                 {
                     Console.WriteLine(_errorString);
                     _errorString = "";
+                }
+                else
+                {
+                    if (retCode == ReturnCodes.Usage)
+                        Console.WriteLine(GetUsage("\n"));
                 }
             }
         }
