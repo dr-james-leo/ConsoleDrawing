@@ -9,8 +9,18 @@ namespace ConsoleDrawing
 {
     public class ConsoleCanvasCommandProcessor: CanvasCommandProcessor
     {
-        public ConsoleCanvasCommandProcessor(Canvas canvas, Hashtable iCommandMap) : base(canvas, iCommandMap)
+        public ConsoleCanvasCommandProcessor(Canvas iCanvas) : base(iCanvas)
         {
+        }
+
+        public override void Display(string displayString)
+        {
+            Console.WriteLine(displayString);
+        }
+
+        public override string GetNewLineChar()
+        {
+            return "\n";
         }
 
         public override void ProcessInputs()

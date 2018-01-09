@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
+using System.Collections;
 
 namespace ConsoleDrawing
 {
@@ -64,18 +65,111 @@ namespace ConsoleDrawing
                 else
                     colour = elements[3];
 
-                if (!canvas.Fill(x, y, colour))
+                if (!Fill(x, y, colour))
                 {
-                    _errorString = canvas.Error;
                     return false;
                 }
 
-                if (!canvas.Display())
-                {
-                    _errorString = canvas.Error;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _errorString = "An error ocurred: " + ex.Message;
+                return false;
+            }
+        }
+
+        // Fills the canvas with the specified colour from position x,y
+        // Return true is successful and false on error
+        public bool Fill(int x, int y, string colour)
+        {
+            _errorString = "";
+
+            try
+            {
+                if (!UndertakeSanityCheck(x, y))
                     return false;
+
+                int colourKey;
+                Hashtable colourMap = _canvas.GetColourMap();
+
+                // Don't want to map the same colour twice so check if we have already used it
+                if (colourMap.ContainsValue(colour))
+                {
+                    colourKey = colourMap.Keys.OfType<int>().FirstOrDefault(a => (string)colourMap[a] == colour);
+                }
+                else
+                {
+                    colourKey = 2 + colourMap.Count;
+                    colourMap.Add(colourKey, colour);
                 }
 
+                if (!FillCell(x, y, colourKey))
+                    return false;
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _errorString = "An error ocurred: " + ex.Message;
+                return false;
+            }
+        }
+
+        // Used to fill the 4 neighbours of a cell, above, below, left and right
+        // Return true is successful and false on error
+        private bool FillNeighbours(int x, int y, int colourKey)
+        {
+            _errorString = "";
+
+            try
+            {
+                if (!FillCell(x + 1, y, colourKey))
+                    return false;
+
+                if (!FillCell(x - 1, y, colourKey))
+                    return false;
+
+                if (!FillCell(x, y + 1, colourKey))
+                    return false;
+
+                if (!FillCell(x, y - 1, colourKey))
+                    return false;
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _errorString = "An error ocurred: " + ex.Message;
+                return false;
+            }
+        }
+
+        // Ensures the fill routine doesn't mpve outside the canvas size
+        private bool isWithinBounds(int x, int y)
+        {
+            if (x < 1 || x > _canvas.GetCanvasWidth() || y < 1 || y > _canvas.GetCanvasHeight())
+                return false;
+            else
+                return true;
+        }
+
+        // Fills a cell with the specified colour and then tries to fill neighbours
+        // Return true is successful and false on error
+        private bool FillCell(int x, int y, int colourKey)
+        {
+            _errorString = "";
+
+            try
+            {
+                int[,] canvasData = _canvas.GetCanvasData();
+
+                if (isWithinBounds(x, y) && canvasData[x - 1, y - 1] == 0)
+                {
+                    canvasData[x - 1, y - 1] = colourKey;
+                    if (!FillNeighbours(x, y, colourKey))
+                        return false;
+                }
                 return true;
             }
             catch (Exception ex)

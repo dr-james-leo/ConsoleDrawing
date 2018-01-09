@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
+using System.Collections;
 
 namespace ConsoleDrawing
 {
@@ -26,6 +27,68 @@ namespace ConsoleDrawing
         public override int GetNumberOfParameters()
         {
             return 5;
+        }
+
+        // Return true is successful and false on error
+        protected bool AddHorizontalLine(int x, int y, int length)
+        {
+            _errorString = "";
+
+            try
+            {
+                if (!UndertakeSanityCheck(x, y))
+                    return false;
+
+                if ((x + length - 1) > _canvas.GetCanvasWidth())
+                {
+                    _errorString = "Length of line too long.";
+                    return false;
+                }
+
+                int[,] canvasData = _canvas.GetCanvasData();
+
+                for (int i = 0; i < length; i++)
+                    canvasData[x - 1 + i, y - 1] = 1;
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _errorString = "An error ocurred: " + ex.Message;
+                return false;
+            }
+        }
+
+        // Return true is successful and false on error
+        protected bool AddVerticalLine(int x, int y, int length)
+        {
+            _errorString = "";
+
+            try
+            {
+                if (!UndertakeSanityCheck(x, y))
+                    return false;
+
+                if ((y + length - 1) > _canvas.GetCanvasHeight())
+                {
+                    _errorString = "Length of line too long.";
+                    return false;
+                }
+
+                int[,] canvasData = _canvas.GetCanvasData();
+
+                for (int j = 0; j < length; j++)
+                {
+                    canvasData[x - 1, y - 1 + j] = 1;
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _errorString = "An error ocurred: " + ex.Message;
+                return false;
+            }
         }
 
         // Return true is successful and false on error
@@ -76,9 +139,8 @@ namespace ConsoleDrawing
                     if (x1 > x2)
                         x = x2;
                     length = Math.Abs(x2 - x1) + 1;
-                    if (!canvas.AddHorizontalLine(x, y1, length))
+                    if (!AddHorizontalLine(x, y1, length))
                     {
-                        _errorString = canvas.Error;
                         return false;
                     }
                 }
@@ -90,9 +152,8 @@ namespace ConsoleDrawing
                         if (y1 > y2)
                             y = y2;
                         length = Math.Abs(y2 - y1) + 1;
-                        if (!canvas.AddVerticalLine(x1, y, length))
+                        if (!AddVerticalLine(x1, y, length))
                         {
-                            _errorString = canvas.Error;
                             return false;
                         }
                     }
@@ -102,13 +163,7 @@ namespace ConsoleDrawing
                         return false;
                     }
                 }
-
-                if (!canvas.Display())
-                {
-                    _errorString = canvas.Error;
-                    return false;
-                }
-
+               
                 return true;
             }
             catch (Exception ex)

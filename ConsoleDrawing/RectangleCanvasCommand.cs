@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
+using System.Collections;
 
 namespace ConsoleDrawing
 {
-    public class RectangleCanvasCommand : CanvasCommand
+    public class RectangleCanvasCommand : LineCanvasCommand
     {
         public RectangleCanvasCommand(Canvas iCanvas) : base(iCanvas)
         {
@@ -83,17 +84,16 @@ namespace ConsoleDrawing
 
                 int rectangleWidth = x2 - x1 + 1;
                 int rectangleHeight = y2 - y1 + 1;
-                if (!canvas.AddRectangle(x1, y1, rectangleWidth, rectangleHeight))
+                if (!AddRectangle(x1, y1, rectangleWidth, rectangleHeight))
                 {
-                    _errorString = canvas.Error;
                     return false;
                 }
 
-                if (!canvas.Display())
-                {
-                    _errorString = canvas.Error;
-                    return false;
-                }
+                //if (!canvas.Display())
+                //{
+                //    _errorString = canvas.Error;
+                //    return false;
+                //}
 
                 return true;
             }
@@ -103,5 +103,37 @@ namespace ConsoleDrawing
                 return true;
             }
         }
+
+        // Return true is successful and false on error
+        public bool AddRectangle(int x, int y, int width, int height)
+        {
+            _errorString = "";
+
+            try
+            {
+                if (!UndertakeSanityCheck(x, y))
+                    return false;
+
+                if (!AddHorizontalLine(x, y, width))
+                    return false;
+
+                if (!AddVerticalLine(x, y, height))
+                    return false;
+
+                if (!AddVerticalLine(x + width - 1, y, height))
+                    return false;
+
+                if (!AddHorizontalLine(x, y + height - 1, width))
+                    return false;
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _errorString = "An error ocurred: " + ex.Message;
+                return false;
+            }
+        }
+
     }
 }

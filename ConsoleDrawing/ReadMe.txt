@@ -93,4 +93,4 @@ Random mode running commands
 Complex shapes
 Min size
 Clear canvas
-
+CanvasCommand can hold a list of commands in the correct order

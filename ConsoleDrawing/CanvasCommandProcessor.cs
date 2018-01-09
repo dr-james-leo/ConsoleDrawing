@@ -13,9 +13,9 @@ namespace ConsoleDrawing
         public enum ReturnCodes { OK, Error, Stop, Usage};
 
         protected string _errorString = "";
-        protected Canvas canvas;
+        protected Canvas _canvas;
 
-        private Hashtable _commandMap;
+        //private Hashtable _commandMap;
 
         //private CanvasCommand createCanvasCommand;
         //private CanvasCommand lineCanvasCommand;
@@ -23,10 +23,10 @@ namespace ConsoleDrawing
         //private CanvasCommand fillCanvasCommand;
         //private CanvasCommand displayCanvasCommand;
 
-        public CanvasCommandProcessor(Canvas iCanvas, Hashtable iCommandMap)
+        public CanvasCommandProcessor(Canvas iCanvas)
         {
-            canvas = iCanvas;
-            _commandMap = iCommandMap;
+            _canvas = iCanvas;
+            //_commandMap = iCommandMap;
             //createCanvasCommand = new CreateCanvasCommand(canvas);
             //lineCanvasCommand = new LineCanvasCommand(canvas);
             //rectangleCanvasCommand = new RectangleCanvasCommand(canvas);
@@ -34,7 +34,7 @@ namespace ConsoleDrawing
             //displayCanvasCommand = new DisplayCanvasCommand(canvas);
 
         }
-
+        
         public string Error
         {
             get { return _errorString; }
@@ -42,6 +42,8 @@ namespace ConsoleDrawing
 
         // Implement this method in subclass depending on the environment
         abstract public void ProcessInputs();
+        abstract public void Display(string displayString);
+        abstract public string GetNewLineChar();
 
         // Returns 1 to continue, 0 to quit or -1 if error
         public ReturnCodes ProcessInputLine(string fullCommand)
@@ -72,19 +74,12 @@ namespace ConsoleDrawing
                         break;
 
                     default:
-                        CanvasCommand canvasCommand = (CanvasCommand)_commandMap[mainCommand];
-                        if (canvasCommand == null)
+                        if(!_canvas.ExecuteCommand(fullCommand))                       
                         {
+                            _errorString = _canvas.Error;
                             retCode = ReturnCodes.Error;
-                            _errorString = fullCommand + " is an unrecognised command.";
                         }
-                        else
-                        {
-                            if (canvasCommand.ProcessCommand(fullCommand))
-                                retCode = ReturnCodes.OK;
-                            else
-                                retCode = ReturnCodes.Error;
-                        }
+                        
                         break;
                 }
             }
