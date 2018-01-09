@@ -8,7 +8,7 @@ using System.Collections;
 
 namespace ConsoleDrawing
 {
-    class FillCanvasCommand: CanvasCommand
+    public class FillCanvasCommand: CanvasCommand
     {
         public FillCanvasCommand(Canvas iCanvas) : base(iCanvas)
         {
@@ -36,6 +36,12 @@ namespace ConsoleDrawing
 
             try
             {
+                if (!_canvas.HasCanvasBeenCreated())
+                {
+                    _errorString = "Please create a canvas first.";
+                    return false;
+                }
+
                 if (!isNumberOfParametersOK(fullCommand))
                     return false;
 

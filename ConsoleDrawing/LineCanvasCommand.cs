@@ -98,6 +98,12 @@ namespace ConsoleDrawing
 
             try
             {
+                if (!_canvas.HasCanvasBeenCreated())
+                {
+                    _errorString = "Please create a canvas first.";
+                    return false;
+                }
+
                 if (!isNumberOfParametersOK(fullCommand))
                     return false;
 

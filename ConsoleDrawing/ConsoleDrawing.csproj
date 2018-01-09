@@ -47,6 +47,7 @@
     <Compile Include="CanvasCommandProcessor.cs" />
     <Compile Include="ConsoleCanvas.cs" />
     <Compile Include="ConsoleCanvasCommandProcessor.cs" />
+    <Compile Include="CreateCanvasCommand.cs" />
     <Compile Include="FillCanvasCommand.cs" />
     <Compile Include="LineCanvasCommand.cs" />
     <Compile Include="Program.cs" />

@@ -14,7 +14,7 @@ namespace ConsoleDrawing
         private Hashtable _colourMap; // maps colours to integers for filling the canvas
         private Hashtable _commandMap = new Hashtable(); // supported commands
 
-        private const string CreateCanvasUsage = "C w h - Create a new canvas of width w and height h";
+        //private const string CreateCanvasUsage = "C w h - Create a new canvas of width w and height h";
         private const string DisplayCanvasUsage = "D - Displays canvas";
 
         // Parameters with defaults
@@ -58,6 +58,22 @@ namespace ConsoleDrawing
             LoadSupportedCommands();
         }
 
+        public void RefreshCanvasData(int requiredWidth, int requiredHeight)
+        {
+            _canvasData = new int[requiredWidth, requiredHeight];
+            _colourMap = new Hashtable();
+        }
+
+        public int MaxHeight
+        {
+            get { return _maxHeight; }
+        }
+
+        public int MaxWidth
+        {
+            get { return _maxWidth;  }
+        }
+
         public Hashtable GetColourMap()
         {
             return _colourMap;
@@ -94,6 +110,9 @@ namespace ConsoleDrawing
 
         private void LoadSupportedCommands()
         {
+            CreateCanvasCommand createCanvasCommand = new CreateCanvasCommand(this);
+            _commandMap.Add(createCanvasCommand.SupportedCommand(), createCanvasCommand);
+
             LineCanvasCommand lineCanvasCommand = new LineCanvasCommand(this);
             _commandMap.Add(lineCanvasCommand.SupportedCommand(), lineCanvasCommand);
 
@@ -119,7 +138,7 @@ namespace ConsoleDrawing
 
         public string GetUsage(string newLineChar)
         {
-            StringBuilder usageString = new StringBuilder(CreateCanvasUsage + newLineChar + DisplayCanvasUsage);
+            StringBuilder usageString = new StringBuilder(DisplayCanvasUsage);
 
             foreach(CanvasCommand canvasCommand in _commandMap)
             {
@@ -129,84 +148,84 @@ namespace ConsoleDrawing
             return usageString.ToString();
         }
 
-        // Creates a new Canvas to draw on, usage is C w h
-        // Return true is successful and false on error
-        private bool Create(string fullCommand)
-        {
-            _errorString = "";
+        //// Creates a new Canvas to draw on, usage is C w h
+        //// Return true is successful and false on error
+        //private bool Create(string fullCommand)
+        //{
+        //    _errorString = "";
 
-            try
-            {
-                string pattern = @"\s+";
-                string[] elements = Regex.Split(fullCommand, pattern);
+        //    try
+        //    {
+        //        string pattern = @"\s+";
+        //        string[] elements = Regex.Split(fullCommand, pattern);
 
-                if (elements.Length < 3)
-                {
-                    _errorString = "Too few parameters. Usage is " + CreateCanvasUsage + ".";
-                    return false;
-                }
+        //        if (elements.Length < 3)
+        //        {
+        //            _errorString = "Too few parameters. Usage is " + CreateCanvasUsage + ".";
+        //            return false;
+        //        }
 
-                if (elements.Length > 3)
-                {
-                    _errorString = "Too many parameters. Usage is " + CreateCanvasUsage + ".";
-                    return false;
-                }
+        //        if (elements.Length > 3)
+        //        {
+        //            _errorString = "Too many parameters. Usage is " + CreateCanvasUsage + ".";
+        //            return false;
+        //        }
 
-                int requestedWidth;
-                if (!int.TryParse(elements[1], out requestedWidth))
-                {
-                    _errorString = "First parameter must be an integer specifying the width.";
-                    return false;
-                }
+        //        int requestedWidth;
+        //        if (!int.TryParse(elements[1], out requestedWidth))
+        //        {
+        //            _errorString = "First parameter must be an integer specifying the width.";
+        //            return false;
+        //        }
 
-                if (requestedWidth < 1)
-                {
-                    _errorString = "Width of canvas must be at least 1.";
-                    return false;
-                }
+        //        if (requestedWidth < 1)
+        //        {
+        //            _errorString = "Width of canvas must be at least 1.";
+        //            return false;
+        //        }
 
-                int requestedHeight;
-                if (!int.TryParse(elements[2], out requestedHeight))
-                {
-                    _errorString = "Second parameter must be an integer specifying the height.";
-                    return false;
-                }
+        //        int requestedHeight;
+        //        if (!int.TryParse(elements[2], out requestedHeight))
+        //        {
+        //            _errorString = "Second parameter must be an integer specifying the height.";
+        //            return false;
+        //        }
 
-                if (requestedHeight < 1)
-                {
-                    _errorString = "Height of canvas must be at least 1.";
-                    return false;
-                }
+        //        if (requestedHeight < 1)
+        //        {
+        //            _errorString = "Height of canvas must be at least 1.";
+        //            return false;
+        //        }
 
 
-                //int height = _canvasData.GetLength(0);
-                //int width = _canvasData.GetLength(1);
-                if (requestedHeight > _maxHeight)
-                {
-                    _errorString = "Maximum height of " + _maxHeight + " exceeded.";
-                    return false;
-                }
+        //        //int height = _canvasData.GetLength(0);
+        //        //int width = _canvasData.GetLength(1);
+        //        if (requestedHeight > _maxHeight)
+        //        {
+        //            _errorString = "Maximum height of " + _maxHeight + " exceeded.";
+        //            return false;
+        //        }
 
-                if (requestedWidth > _maxWidth)
-                {
-                    _errorString = "Maximum width of " + _maxWidth + " exceeded.";
-                    return false;
-                }
+        //        if (requestedWidth > _maxWidth)
+        //        {
+        //            _errorString = "Maximum width of " + _maxWidth + " exceeded.";
+        //            return false;
+        //        }
 
-                //_width = requiredWidth;
-                //_height = requiredHeight;
+        //        //_width = requiredWidth;
+        //        //_height = requiredHeight;
 
-                _canvasData = new int[requestedWidth, requestedHeight];
-                _colourMap = new Hashtable();
-                //hasCanvasBeenCreated = true;
-                return true;
-            }
-            catch (Exception ex)
-            {
-                _errorString = "An error ocurred: " + ex.Message;
-                return false;
-            }
-        }
+        //        _canvasData = new int[requestedWidth, requestedHeight];
+        //        _colourMap = new Hashtable();
+        //        //hasCanvasBeenCreated = true;
+        //        return true;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _errorString = "An error ocurred: " + ex.Message;
+        //        return false;
+        //    }
+        //}
 
         public bool ExecuteCommand(string fullCommand)
         {
@@ -223,22 +242,7 @@ namespace ConsoleDrawing
                             return false;
                         break;
 
-                    case 'C':
-                        if (!Create(fullCommand))
-                            return false;
-                        else
-                            if(!Display())
-                                return false;
-
-                        break;
-
                     default:
-                        if (!HasCanvasBeenCreated())
-                        {
-                            _errorString = "Please create a canvas first.";
-                            return false;
-                        }
-
                         CanvasCommand canvasCommand = (CanvasCommand)_commandMap[mainCommand];
                         if (canvasCommand == null)
                         {
