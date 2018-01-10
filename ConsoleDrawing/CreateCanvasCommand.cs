@@ -15,19 +15,19 @@ namespace ConsoleDrawing
         {
         }
 
-        public override char SupportedCommand()
+        public override char SupportedCommand
         {
-            return 'C';
+            get { return 'C'; }
         }
 
-        public override string GetUsage()
+        public override string Usage
         {
-            return "C w h - Create a new canvas of width w and height h";
+            get { return "C w h - Create a new canvas of width w and height h"; }
         }
 
-        public override int GetNumberOfParameters()
+        public override int NumberOfParameters
         {
-            return 3;
+            get { return 3; }
         }
 
         // Return true is successful and false on error

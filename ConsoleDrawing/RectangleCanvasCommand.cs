@@ -10,23 +10,23 @@ namespace ConsoleDrawing
 {
     public class RectangleCanvasCommand : LineCanvasCommand
     {
-        public RectangleCanvasCommand(Canvas iCanvas) : base(iCanvas)
+        public RectangleCanvasCommand(Canvas canvas) : base(canvas)
         {
         }
 
-        public override char SupportedCommand()
+        public override char SupportedCommand
         {
-            return 'R';
+            get { return 'R'; }
         }
 
-        public override string GetUsage()
+        public override string Usage
         {
-            return "R x1 y1 x2 y2 - Add a rectangle whose upper left corner is (x1, y1) and lower right corner is (x2, y2)";
+            get { return "R x1 y1 x2 y2 - Add a rectangle whose upper left corner is (x1, y1) and lower right corner is (x2, y2)"; }
         }
 
-        public override int GetNumberOfParameters()
+        public override int NumberOfParameters
         {
-            return 5;
+            get { return 5; }
         }
 
         // Return true is successful and false on error
@@ -88,18 +88,14 @@ namespace ConsoleDrawing
                     return false;
                 }
 
+                int colourKey = _canvas.GetColourKeyFor("x");
+
                 int rectangleWidth = x2 - x1 + 1;
                 int rectangleHeight = y2 - y1 + 1;
-                if (!AddRectangle(x1, y1, rectangleWidth, rectangleHeight))
+                if (!AddRectangle(x1, y1, rectangleWidth, rectangleHeight, colourKey))
                 {
                     return false;
                 }
-
-                //if (!canvas.Display())
-                //{
-                //    _errorString = canvas.Error;
-                //    return false;
-                //}
 
                 return true;
             }
@@ -111,7 +107,7 @@ namespace ConsoleDrawing
         }
 
         // Return true is successful and false on error
-        public bool AddRectangle(int x, int y, int width, int height)
+        public bool AddRectangle(int x, int y, int width, int height, int colourKey)
         {
             _errorString = "";
 
@@ -120,16 +116,16 @@ namespace ConsoleDrawing
                 if (!UndertakeSanityCheck(x, y))
                     return false;
 
-                if (!AddHorizontalLine(x, y, width))
+                if (!AddHorizontalLine(x, y, width, colourKey))
                     return false;
 
-                if (!AddVerticalLine(x, y, height))
+                if (!AddVerticalLine(x, y, height, colourKey))
                     return false;
 
-                if (!AddVerticalLine(x + width - 1, y, height))
+                if (!AddVerticalLine(x + width - 1, y, height, colourKey))
                     return false;
 
-                if (!AddHorizontalLine(x, y + height - 1, width))
+                if (!AddHorizontalLine(x, y + height - 1, width, colourKey))
                     return false;
 
                 return true;

@@ -94,3 +94,10 @@ Complex shapes
 Min size
 Clear canvas
 CanvasCommand can hold a list of commands in the correct order
+
+Two level of commands, the first the ConsoleCanvasCommandProcessor can deal with, Q(uit), ?(Usage), D(isplay).
+All other commands are forwarded to the Canvas calls to deal with
+
+
+To Do
+1. Delete CanvasCommandProcessor, replaced with ConsoleCanvasCommandProcessor

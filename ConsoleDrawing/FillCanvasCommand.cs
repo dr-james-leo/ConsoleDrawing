@@ -10,23 +10,23 @@ namespace ConsoleDrawing
 {
     public class FillCanvasCommand: CanvasCommand
     {
-        public FillCanvasCommand(Canvas iCanvas) : base(iCanvas)
+        public FillCanvasCommand(Canvas canvas) : base(canvas)
         {
         }
 
-        public override char SupportedCommand()
+        public override char SupportedCommand
         {
-            return 'B';
+            get{return 'B';}
         }
 
-        public override string GetUsage()
+        public override string Usage
         {
-            return "B x y c - Fill entire area connect to (x, y) with colour c";
+            get { return "B x y c - Fill entire area connect to (x, y) with colour c"; }
         }
 
-        public override int GetNumberOfParameters()
+        public override int NumberOfParameters
         {
-            return 4;
+            get { return 4; }
         }
 
         // Return true is successful and false on error
@@ -96,20 +96,8 @@ namespace ConsoleDrawing
                 if (!UndertakeSanityCheck(x, y))
                     return false;
 
-                int colourKey;
-                Hashtable colourMap = _canvas.GetColourMap();
-
-                // Don't want to map the same colour twice so check if we have already used it
-                if (colourMap.ContainsValue(colour))
-                {
-                    colourKey = colourMap.Keys.OfType<int>().FirstOrDefault(a => (string)colourMap[a] == colour);
-                }
-                else
-                {
-                    colourKey = 2 + colourMap.Count;
-                    colourMap.Add(colourKey, colour);
-                }
-
+                int colourKey = _canvas.GetColourKeyFor(colour);
+                
                 if (!FillCell(x, y, colourKey))
                     return false;
 

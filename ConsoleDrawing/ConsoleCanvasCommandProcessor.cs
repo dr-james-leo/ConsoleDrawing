@@ -7,23 +7,16 @@ using System.Threading.Tasks;
 
 namespace ConsoleDrawing
 {
-    public class ConsoleCanvasCommandProcessor: CanvasCommandProcessor
+    public class ConsoleCanvasCommandProcessor
     {
-        public ConsoleCanvasCommandProcessor(Canvas iCanvas) : base(iCanvas)
+        protected Canvas _canvas;
+
+        public ConsoleCanvasCommandProcessor()
         {
+            _canvas = new Canvas();
         }
 
-        public override void Display(string displayString)
-        {
-            Console.WriteLine(displayString);
-        }
-
-        public override string GetNewLineChar()
-        {
-            return "\n";
-        }
-
-        public override void ProcessInputs()
+        public void ProcessInputs()
         {
             while (true)
             {
@@ -31,22 +24,59 @@ namespace ConsoleDrawing
 
                 string inputString = Console.ReadLine();
 
-                ReturnCodes retCode = ProcessInputLine(inputString);
-                
-                if (retCode == ReturnCodes.Stop)
-                    break;
+                if (!ProcessInputLine(inputString))
+                    break;               
+            }
+        }
 
-                if (retCode == ReturnCodes.Error)
+        // Returns true to continue and false to stop
+        public bool ProcessInputLine(string fullCommand)
+        {            
+            try
+            {
+                fullCommand = fullCommand.Trim();
+
+                if (fullCommand.Length == 0)
                 {
-                    Console.WriteLine(_errorString);
-                    _errorString = "";
+                    Console.WriteLine("Please enter a command.");
+                    return true;
                 }
-                else
+
+                char mainCommand = fullCommand.First<char>();
+
+                switch (mainCommand)
                 {
-                    if (retCode == ReturnCodes.Usage)
-                        Console.WriteLine(GetUsage("\n"));
+                    case 'Q':
+                        return false;
+                        break;
+
+                    case '?':
+                        Console.WriteLine(_canvas.GetUsage("\n"));
+                        break;
+
+                    default:
+                        if (_canvas.ExecuteCommand(fullCommand))
+                        {
+                            string displayString = _canvas.RenderToString("\n");
+                            if (displayString.Length > 0)
+                                Console.WriteLine(displayString);
+                            else
+                                Console.WriteLine(_canvas.Error);
+                        }
+                        else
+                        {
+                            Console.WriteLine(_canvas.Error);
+                        }
+
+                        break;
                 }
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine("An error ocurred: " + ex.Message);
+            }
+
+            return true;
         }
     }
 }

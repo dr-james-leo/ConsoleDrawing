@@ -14,23 +14,23 @@ namespace ConsoleDrawing
         {
         }
 
-        public override char SupportedCommand()
+        public override char SupportedCommand
         {
-            return 'L';
+            get { return 'L'; }
         }
 
-        public override string GetUsage()
+        public override string Usage
         {
-            return "L x1 y1 x2 y2 - Add a new line for (x1, y1) to (x2, y2)";
+            get { return "L x1 y1 x2 y2 - Add a new line for (x1, y1) to (x2, y2)"; }
         }
 
-        public override int GetNumberOfParameters()
+        public override int NumberOfParameters
         {
-            return 5;
+            get{ return 5; }
         }
 
         // Return true is successful and false on error
-        protected bool AddHorizontalLine(int x, int y, int length)
+        protected bool AddHorizontalLine(int x, int y, int length, int colourKey)
         {
             _errorString = "";
 
@@ -48,7 +48,7 @@ namespace ConsoleDrawing
                 int[,] canvasData = _canvas.GetCanvasData();
 
                 for (int i = 0; i < length; i++)
-                    canvasData[x - 1 + i, y - 1] = 1;
+                    canvasData[x - 1 + i, y - 1] = colourKey;
 
                 return true;
             }
@@ -60,7 +60,7 @@ namespace ConsoleDrawing
         }
 
         // Return true is successful and false on error
-        protected bool AddVerticalLine(int x, int y, int length)
+        protected bool AddVerticalLine(int x, int y, int length, int colourKey)
         {
             _errorString = "";
 
@@ -79,7 +79,7 @@ namespace ConsoleDrawing
 
                 for (int j = 0; j < length; j++)
                 {
-                    canvasData[x - 1, y - 1 + j] = 1;
+                    canvasData[x - 1, y - 1 + j] = colourKey;
                 }
 
                 return true;
@@ -138,6 +138,8 @@ namespace ConsoleDrawing
                     return false;
                 }
 
+                int colourKey = _canvas.GetColourKeyFor("x");
+
                 int length;
                 if (y1 == y2)
                 {
@@ -145,7 +147,7 @@ namespace ConsoleDrawing
                     if (x1 > x2)
                         x = x2;
                     length = Math.Abs(x2 - x1) + 1;
-                    if (!AddHorizontalLine(x, y1, length))
+                    if (!AddHorizontalLine(x, y1, length, colourKey))
                     {
                         return false;
                     }
@@ -158,7 +160,7 @@ namespace ConsoleDrawing
                         if (y1 > y2)
                             y = y2;
                         length = Math.Abs(y2 - y1) + 1;
-                        if (!AddVerticalLine(x1, y, length))
+                        if (!AddVerticalLine(x1, y, length, colourKey))
                         {
                             return false;
                         }
