@@ -13,9 +13,13 @@ namespace ConsoleDrawing
         protected string _errorString = "";
         protected Canvas _canvas;
         
-        public CanvasCommand(Canvas iCanvas)
+        public CanvasCommand()
         {
-            _canvas = iCanvas;
+        }
+
+        public void SetCanvas(Canvas canvas)
+        {
+            _canvas = canvas;
         }
 
         abstract public char SupportedCommand { get; }
@@ -28,29 +32,28 @@ namespace ConsoleDrawing
             get { return _errorString; }
         }
 
-        // Checks that an inital canvas has been created and the values of x and y are within the canvas space
+        // Checks the values of x and y are within the canvas space
         // Return true is successful and false on error
-        protected bool UndertakeSanityCheck(int x, int y)
-        {          
-            int[,] canvasData = _canvas.GetCanvasData();
+        protected bool areXAndYWithinBounds(int x, int y)
+        {
 
-            if (x < 1 || x > canvasData.GetLength(0))
+            if (x < 1 || x > _canvas.CanvasWidth)
             {
-                _errorString = "x must be between 1 and " + canvasData.GetLength(0) + ".";
+                _errorString = "x must be between 1 and " + _canvas.CanvasWidth + ".";
                 return false;
             }
 
-            if (y < 1 || y > canvasData.GetLength(1))
+            if (y < 1 || y > _canvas.CanvasHeight)
             {
-                _errorString = "y must be between 1 and " + canvasData.GetLength(1) + ".";
+                _errorString = "y must be between 1 and " + _canvas.CanvasHeight + ".";
                 return false;
             }
 
             return true;
         }
 
-        // Return true if parameters are ok or false if not
-        protected bool isNumberOfParametersOK(string fullCommand)
+        // Returns parameters as array if ok or null if not
+        protected string[] GetParameters(string fullCommand)
         {
             _errorString = "";
 
@@ -62,24 +65,22 @@ namespace ConsoleDrawing
                 if (elements.Length < NumberOfParameters)
                 {
                     _errorString = "Too few parameters. Usage is " + Usage + ".";
-                    return false;
+                    return null;
                 }
 
                 if (elements.Length > NumberOfParameters)
                 {
                     _errorString = "Too many parameters. Usage is " + Usage + ".";
-                    return false;
+                    return null;
                 }
 
-                return true;
+                return elements;
             }
             catch (Exception ex)
             {
                 _errorString = "An error ocurred: " + ex.Message;
-                return false;
+                return null;
             }
         }
-
-
     }
 }

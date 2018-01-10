@@ -10,7 +10,7 @@ namespace ConsoleDrawing
 {
     public class LineCanvasCommand : CanvasCommand
     {
-        public LineCanvasCommand(Canvas iCanvas) : base(iCanvas)
+        public LineCanvasCommand()
         {
         }
 
@@ -36,16 +36,16 @@ namespace ConsoleDrawing
 
             try
             {
-                if (!UndertakeSanityCheck(x, y))
+                if (!areXAndYWithinBounds(x, y))
                     return false;
 
-                if ((x + length - 1) > _canvas.GetCanvasWidth())
+                if ((x + length - 1) > _canvas.CanvasWidth)
                 {
                     _errorString = "Length of line too long.";
                     return false;
                 }
 
-                int[,] canvasData = _canvas.GetCanvasData();
+                int[,] canvasData = _canvas.CanvasData;
 
                 for (int i = 0; i < length; i++)
                     canvasData[x - 1 + i, y - 1] = colourKey;
@@ -66,16 +66,16 @@ namespace ConsoleDrawing
 
             try
             {
-                if (!UndertakeSanityCheck(x, y))
+                if (!areXAndYWithinBounds(x, y))
                     return false;
 
-                if ((y + length - 1) > _canvas.GetCanvasHeight())
+                if ((y + length - 1) > _canvas.CanvasHeight)
                 {
                     _errorString = "Length of line too long.";
                     return false;
                 }
 
-                int[,] canvasData = _canvas.GetCanvasData();
+                int[,] canvasData = _canvas.CanvasData;
 
                 for (int j = 0; j < length; j++)
                 {
@@ -102,13 +102,11 @@ namespace ConsoleDrawing
                 {
                     _errorString = "Please create a canvas first.";
                     return false;
-                }
-
-                if (!isNumberOfParametersOK(fullCommand))
+                }               
+                
+                string[] elements = GetParameters(fullCommand);
+                if (elements == null)
                     return false;
-
-                string pattern = @"\s+";
-                string[] elements = Regex.Split(fullCommand, pattern);
 
                 int x1;
                 if (!int.TryParse(elements[1], out x1))
@@ -138,7 +136,7 @@ namespace ConsoleDrawing
                     return false;
                 }
 
-                int colourKey = _canvas.GetColourKeyFor("x");
+                int colourKey = _canvas.GetColourKeyFor(_canvas.LineChar);
 
                 int length;
                 if (y1 == y2)

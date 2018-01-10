@@ -10,7 +10,7 @@ namespace ConsoleDrawing
 {
     public class RectangleCanvasCommand : LineCanvasCommand
     {
-        public RectangleCanvasCommand(Canvas canvas) : base(canvas)
+        public RectangleCanvasCommand()
         {
         }
 
@@ -42,11 +42,9 @@ namespace ConsoleDrawing
                     return false;
                 }
 
-                if (!isNumberOfParametersOK(fullCommand))
+                string[] elements = GetParameters(fullCommand);
+                if (elements == null)
                     return false;
-
-                string pattern = @"\s+";
-                string[] elements = Regex.Split(fullCommand, pattern);
 
                 int x1;
                 if (!int.TryParse(elements[1], out x1))
@@ -88,7 +86,7 @@ namespace ConsoleDrawing
                     return false;
                 }
 
-                int colourKey = _canvas.GetColourKeyFor("x");
+                int colourKey = _canvas.GetColourKeyFor('x');
 
                 int rectangleWidth = x2 - x1 + 1;
                 int rectangleHeight = y2 - y1 + 1;
@@ -113,7 +111,7 @@ namespace ConsoleDrawing
 
             try
             {
-                if (!UndertakeSanityCheck(x, y))
+                if (!areXAndYWithinBounds(x, y))
                     return false;
 
                 if (!AddHorizontalLine(x, y, width, colourKey))

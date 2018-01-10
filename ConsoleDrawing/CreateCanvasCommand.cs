@@ -11,7 +11,7 @@ namespace ConsoleDrawing
 {
     public class CreateCanvasCommand : CanvasCommand
     {
-        public CreateCanvasCommand(Canvas iCanvas) : base(iCanvas)
+        public CreateCanvasCommand()
         {
         }
 
@@ -37,11 +37,9 @@ namespace ConsoleDrawing
 
             try
             {
-                if (!isNumberOfParametersOK(fullCommand))
+                string[] elements = GetParameters(fullCommand);
+                if (elements == null)
                     return false;
-
-                string pattern = @"\s+";
-                string[] elements = Regex.Split(fullCommand, pattern);
 
                 int requestedWidth;
                 if (!int.TryParse(elements[1], out requestedWidth))

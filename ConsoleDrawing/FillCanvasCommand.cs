@@ -10,9 +10,15 @@ namespace ConsoleDrawing
 {
     public class FillCanvasCommand: CanvasCommand
     {
-        public FillCanvasCommand(Canvas canvas) : base(canvas)
+        public FillCanvasCommand()
         {
         }
+
+        private int _spaceColourKey;
+        private int _canvasWidth;
+        private int _canvasHeight;
+        private int[,] _canvasData;
+        private int _colourKey;
 
         public override char SupportedCommand
         {
@@ -42,11 +48,9 @@ namespace ConsoleDrawing
                     return false;
                 }
 
-                if (!isNumberOfParametersOK(fullCommand))
+                string[] elements = GetParameters(fullCommand);
+                if (elements == null)
                     return false;
-
-                string pattern = @"\s+";
-                string[] elements = Regex.Split(fullCommand, pattern);
 
                 int x;
                 if (!int.TryParse(elements[1], out x))
@@ -62,14 +66,14 @@ namespace ConsoleDrawing
                     return false;
                 }
 
-                string colour;
+                char colour;
                 if (elements[3].Length > 1)
                 {
                     _errorString = "Third parameter must be a single character specifying the colour.";
                     return false;
                 }
                 else
-                    colour = elements[3];
+                    colour = elements[3][0];
 
                 if (!Fill(x, y, colour))
                 {
@@ -87,18 +91,23 @@ namespace ConsoleDrawing
 
         // Fills the canvas with the specified colour from position x,y
         // Return true is successful and false on error
-        public bool Fill(int x, int y, string colour)
+        public bool Fill(int x, int y, char colour)
         {
             _errorString = "";
 
             try
             {
-                if (!UndertakeSanityCheck(x, y))
+                if (!areXAndYWithinBounds(x, y))
                     return false;
-
-                int colourKey = _canvas.GetColourKeyFor(colour);
                 
-                if (!FillCell(x, y, colourKey))
+                // set up some private attributes to speed up execution
+                _colourKey = _canvas.GetColourKeyFor(colour);
+                _spaceColourKey = _canvas.GetColourKeyFor(_canvas.SpaceChar);
+                _canvasWidth = _canvas.CanvasWidth;
+                _canvasHeight = _canvas.CanvasHeight;
+                _canvasData = _canvas.CanvasData;
+
+                if (!FillCell(x, y))
                     return false;
 
                 return true;
@@ -112,22 +121,22 @@ namespace ConsoleDrawing
 
         // Used to fill the 4 neighbours of a cell, above, below, left and right
         // Return true is successful and false on error
-        private bool FillNeighbours(int x, int y, int colourKey)
+        private bool FillNeighbours(int x, int y)
         {
             _errorString = "";
 
             try
             {
-                if (!FillCell(x + 1, y, colourKey))
+                if (!FillCell(x + 1, y))
                     return false;
 
-                if (!FillCell(x - 1, y, colourKey))
+                if (!FillCell(x - 1, y))
                     return false;
 
-                if (!FillCell(x, y + 1, colourKey))
+                if (!FillCell(x, y + 1))
                     return false;
 
-                if (!FillCell(x, y - 1, colourKey))
+                if (!FillCell(x, y - 1))
                     return false;
 
                 return true;
@@ -139,29 +148,27 @@ namespace ConsoleDrawing
             }
         }
 
-        // Ensures the fill routine doesn't mpve outside the canvas size
-        private bool isWithinBounds(int x, int y)
-        {
-            if (x < 1 || x > _canvas.GetCanvasWidth() || y < 1 || y > _canvas.GetCanvasHeight())
-                return false;
-            else
-                return true;
-        }
+        //// Ensures the fill routine doesn't mpve outside the canvas size
+        //private bool isWithinBounds(int x, int y)
+        //{
+        //    if (x < 1 || x > _canvasWidth || y < 1 || y > _canvasHeight)
+        //        return false;
+        //    else
+        //        return true;
+        //}
 
         // Fills a cell with the specified colour and then tries to fill neighbours
         // Return true is successful and false on error
-        private bool FillCell(int x, int y, int colourKey)
+        private bool FillCell(int x, int y)
         {
             _errorString = "";
 
             try
             {
-                int[,] canvasData = _canvas.GetCanvasData();
-
-                if (isWithinBounds(x, y) && canvasData[x - 1, y - 1] == 0)
+                if (areXAndYWithinBounds(x, y) && _canvasData[x - 1, y - 1] == _spaceColourKey)
                 {
-                    canvasData[x - 1, y - 1] = colourKey;
-                    if (!FillNeighbours(x, y, colourKey))
+                    _canvasData[x - 1, y - 1] = _colourKey;
+                    if (!FillNeighbours(x, y))
                         return false;
                 }
                 return true;

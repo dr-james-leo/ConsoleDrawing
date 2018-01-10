@@ -27,7 +27,6 @@ namespace ConsoleDrawing
 
         public Canvas()
         {
-            LoadSupportedCommands();
         }
 
         // Allows overriding the default values for the maximum size of the canvas
@@ -35,7 +34,6 @@ namespace ConsoleDrawing
         {
             _maxWidth = maxWidth;
             _maxHeight = maxHeight;
-            LoadSupportedCommands();
         }
 
         // Allows overriding the defaults values for the maximum size of the canvas and the characters used to draw the canvas
@@ -47,27 +45,52 @@ namespace ConsoleDrawing
             _leftAndRightEdgeChar = leftAndRightEdgeChar;
             _maxWidth = maxWidth;
             _maxHeight = maxHeight;
-            LoadSupportedCommands();
+        }
+
+        public char SpaceChar
+        {
+            get { return _spaceChar; }
+        }
+
+        public char LineChar
+        {
+            get { return _lineChar; }
+        }
+
+        public bool AddNewCommand(CanvasCommand canvasCommand)
+        {
+            if (_commandList[canvasCommand.SupportedCommand] == null)
+            {
+                canvasCommand.SetCanvas(this);
+                _commandList.Add(canvasCommand.SupportedCommand, canvasCommand);
+                return true;
+            }
+            else
+            {
+                _errorString = "Command " + canvasCommand.SupportedCommand + " already supported";
+                return false;
+            }
         }
 
         public void RefreshCanvasData(int requiredWidth, int requiredHeight)
         {
             _canvasData = new int[requiredWidth, requiredHeight];
             _colourList = new Hashtable();
+            _colourList.Add(0, _spaceChar); // Add in the spaces
         }
 
-        public int GetColourKeyFor(string colour)
+        public int GetColourKeyFor(char colour)
         {
             int colourKey;
 
             // Don't want to map the same colour twice so check if we have already used it
             if (_colourList.ContainsValue(colour))
             {
-                colourKey = _colourList.Keys.OfType<int>().FirstOrDefault(a => (string)_colourList[a] == colour);
+                colourKey = _colourList.Keys.OfType<int>().FirstOrDefault(a => ((char)_colourList[a] == colour));
             }
             else
             {
-                colourKey = 2 + _colourList.Count;
+                colourKey = _colourList.Count;
                 _colourList.Add(colourKey, colour);
             }
 
@@ -83,12 +106,7 @@ namespace ConsoleDrawing
         {
             get { return _maxWidth;  }
         }
-
-        public Hashtable GetColourMap()
-        {
-            return _colourList;
-        }
-
+        
         public bool HasCanvasBeenCreated()
         {
             if (_canvasData == null)
@@ -97,42 +115,36 @@ namespace ConsoleDrawing
                 return true;
         }
 
-        public int GetCanvasWidth()
+        public int CanvasWidth
         {
-            if (HasCanvasBeenCreated())
-                return _canvasData.GetLength(0);
-            else
-                return 0;
+            get
+            {
+                if (HasCanvasBeenCreated())
+                    return _canvasData.GetLength(0);
+                else
+                    return 0;
+            }
         }
 
-        public int GetCanvasHeight()
+        public int CanvasHeight
         {
-            if (HasCanvasBeenCreated())
-                return _canvasData.GetLength(1);
-            else
-                return 0;
+            get
+            {
+                if (HasCanvasBeenCreated())
+                    return _canvasData.GetLength(1);
+                else
+                    return 0;
+            }
         }
 
-        public int[,] GetCanvasData()
+        public int[,] CanvasData
         {
-            return _canvasData;
+            get
+            {
+                return _canvasData;
+            }
         }
-
-        private void LoadSupportedCommands()
-        {
-            CreateCanvasCommand createCanvasCommand = new CreateCanvasCommand(this);
-            _commandList.Add(createCanvasCommand.SupportedCommand, createCanvasCommand);
-
-            LineCanvasCommand lineCanvasCommand = new LineCanvasCommand(this);
-            _commandList.Add(lineCanvasCommand.SupportedCommand, lineCanvasCommand);
-
-            RectangleCanvasCommand rectangleCanvasCommand = new RectangleCanvasCommand(this);
-            _commandList.Add(rectangleCanvasCommand.SupportedCommand, rectangleCanvasCommand);
-
-            FillCanvasCommand fillCanvasCommand = new FillCanvasCommand(this);
-            _commandList.Add(fillCanvasCommand.SupportedCommand, fillCanvasCommand);
-        }
-
+        
         public string Error
         {
             get { return _errorString; }
@@ -186,23 +198,23 @@ namespace ConsoleDrawing
 
         // Checks the values of x and y are within the canvas space
         // Return true is successful and false on error
-        virtual public bool UndertakeSanityCheck(int x, int y)
-        {
+        //virtual public bool areXAndYWithinBounds(int x, int y)
+        //{
 
-            if (x < 1 || x > GetCanvasWidth())
-            {
-                _errorString = "x must be between 1 and " + GetCanvasWidth() + ".";
-                return false;
-            }
+        //    if (x < 1 || x > CanvasWidth)
+        //    {
+        //        _errorString = "x must be between 1 and " + CanvasWidth + ".";
+        //        return false;
+        //    }
 
-            if (y < 1 || y > GetCanvasHeight())
-            {
-                _errorString = "y must be between 1 and " + GetCanvasHeight() + ".";
-                return false;
-            }
+        //    if (y < 1 || y > CanvasHeight)
+        //    {
+        //        _errorString = "y must be between 1 and " + CanvasHeight + ".";
+        //        return false;
+        //    }
 
-            return true;
-        }
+        //    return true;
+        //}
 
         // Returns an empty string on error and sets _errorString;
         public string RenderToString(string newLineChar)
@@ -220,32 +232,20 @@ namespace ConsoleDrawing
                 StringBuilder displayString = new StringBuilder("");
 
                 // Render the top line
-                for (int i = 0; i < GetCanvasWidth() + 2; i++)
+                for (int i = 0; i < CanvasWidth + 2; i++)
                     displayString.Append(_topAndBottomEdgeChar);
 
                 displayString.Append(newLineChar);
 
-                for (int j = 0; j < GetCanvasHeight(); j++)
+                // Render the canvas data
+                for (int j = 0; j < CanvasHeight; j++)
                 {
                     displayString.Append(_leftAndRightEdgeChar);
 
-                    for (int i = 0; i < GetCanvasWidth(); i++)
+                    for (int i = 0; i < CanvasWidth; i++)
                     {
-                        switch (_canvasData[i, j])
-                        {
-                            case 0:
-                                displayString.Append(_spaceChar);
-                                break;
-
-                            case 1:
-                                displayString.Append(_lineChar);
-                                break;
-
-                            default:
-                                string colour = (string)_colourList[_canvasData[i, j]];
-                                displayString.Append(colour);
-                                break;
-                        }
+                        char colour = (char)_colourList[_canvasData[i, j]];
+                        displayString.Append(colour);                       
                     }
 
                     displayString.Append(_leftAndRightEdgeChar);
@@ -253,7 +253,7 @@ namespace ConsoleDrawing
                 }
 
                 // Render the bottom line
-                for (int i = 0; i < GetCanvasWidth() + 2; i++)
+                for (int i = 0; i < CanvasWidth + 2; i++)
                     displayString.Append(_topAndBottomEdgeChar);
 
                 return displayString.ToString();

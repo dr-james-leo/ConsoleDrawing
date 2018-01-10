@@ -14,6 +14,17 @@ namespace ConsoleDrawing
         public ConsoleCanvasCommandProcessor()
         {
             _canvas = new Canvas();
+            CreateCanvasCommand createCanvasCommand = new CreateCanvasCommand();
+            _canvas.AddNewCommand(createCanvasCommand);
+
+            LineCanvasCommand lineCanvasCommand = new LineCanvasCommand();
+            _canvas.AddNewCommand(lineCanvasCommand);
+
+            RectangleCanvasCommand rectangleCanvasCommand = new RectangleCanvasCommand();
+            _canvas.AddNewCommand(rectangleCanvasCommand);
+
+            FillCanvasCommand fillCanvasCommand = new FillCanvasCommand();
+            _canvas.AddNewCommand(fillCanvasCommand);
         }
 
         public void ProcessInputs()
@@ -30,7 +41,7 @@ namespace ConsoleDrawing
         }
 
         // Returns true to continue and false to stop
-        public bool ProcessInputLine(string fullCommand)
+        private bool ProcessInputLine(string fullCommand)
         {            
             try
             {
@@ -48,7 +59,6 @@ namespace ConsoleDrawing
                 {
                     case 'Q':
                         return false;
-                        break;
 
                     case '?':
                         Console.WriteLine(_canvas.GetUsage("\n"));

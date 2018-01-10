@@ -7,126 +7,116 @@ namespace ConsoleDrawingTest
     [TestClass]
     public class CanvasConsoleTests
     {
-        //[TestMethod]
-        //public void TestCreatingCanvas()
-        //{
-        //    TestCanvas canvas = new TestCanvas();
-        //    ConsoleCanvasCommandProcessor consoleCommandProcessor = new ConsoleCanvasCommandProcessor(canvas);
-            
-        //    // Check can create a canvas
-        //    Assert.AreEqual(CanvasCommandProcessor.ReturnCodes.OK, consoleCommandProcessor.ProcessInputLine("C 4 3"));
-        //    Assert.AreEqual("------|    ||    ||    |------", canvas.DisplayAsString);
+        [TestMethod]
+        public void TestCreatingCanvas()
+        {
+            TestConsoleCommandProcessor testConsoleCommandProcessor = new TestConsoleCommandProcessor();
 
-        //    // Now check can't create canvas with bad parameters
-        //    Assert.AreEqual(CanvasCommandProcessor.ReturnCodes.Error, consoleCommandProcessor.ProcessInputLine("C a 4"));
-        //    Assert.AreEqual(CanvasCommandProcessor.ReturnCodes.Error, consoleCommandProcessor.ProcessInputLine("C 4 b"));
-        //    Assert.AreEqual(CanvasCommandProcessor.ReturnCodes.Error, consoleCommandProcessor.ProcessInputLine("C a b"));
-        //    Assert.AreEqual(CanvasCommandProcessor.ReturnCodes.Error, consoleCommandProcessor.ProcessInputLine("C -1 4"));
-        //    Assert.AreEqual(CanvasCommandProcessor.ReturnCodes.Error, consoleCommandProcessor.ProcessInputLine("C 0 4"));
-        //    Assert.AreEqual(CanvasCommandProcessor.ReturnCodes.Error, consoleCommandProcessor.ProcessInputLine("C 20 0"));
-        //    Assert.AreEqual(CanvasCommandProcessor.ReturnCodes.Error, consoleCommandProcessor.ProcessInputLine("C 4 3 3"));
-        //    Assert.AreEqual(CanvasCommandProcessor.ReturnCodes.Error, consoleCommandProcessor.ProcessInputLine("C 100000 5"));
+            // Check can create a canvas
+            Assert.AreEqual(true, testConsoleCommandProcessor.TestInputLine("C 4 3"));
+            Assert.AreEqual("------|    ||    ||    |------", testConsoleCommandProcessor.GetString());
 
-        //    Assert.AreEqual(CanvasCommandProcessor.ReturnCodes.Stop, consoleCommandProcessor.ProcessInputLine("Q"));
-        //}
+            // Now check can't create canvas with bad parameters
+            Assert.AreEqual(false, testConsoleCommandProcessor.TestInputLine("C a 4"));
+            Assert.AreEqual(false, testConsoleCommandProcessor.TestInputLine("C 4 b"));
+            Assert.AreEqual(false, testConsoleCommandProcessor.TestInputLine("C a b"));
+            Assert.AreEqual(false, testConsoleCommandProcessor.TestInputLine("C -1 4"));
+            Assert.AreEqual(false, testConsoleCommandProcessor.TestInputLine("C 0 4"));
+            Assert.AreEqual(false, testConsoleCommandProcessor.TestInputLine("C 20 0"));
+            Assert.AreEqual(false, testConsoleCommandProcessor.TestInputLine("C 4 3 3"));
+            Assert.AreEqual(false, testConsoleCommandProcessor.TestInputLine("C 100000 5"));
+        }
 
-        //[TestMethod]
-        //public void TestAddingLine()
-        //{
-        //    TestCanvas canvas = new TestCanvas();
-        //    ConsoleCanvasCommandProcessor consoleCommandProcessor = new ConsoleCanvasCommandProcessor(canvas);
+        [TestMethod]
+        public void TestAddingLine()
+        {
+            TestConsoleCommandProcessor testConsoleCommandProcessor = new TestConsoleCommandProcessor();
 
-        //    // Check can create a canvas
-        //    Assert.AreEqual(CanvasCommandProcessor.ReturnCodes.OK, consoleCommandProcessor.ProcessInputLine("C 4 3"));
-        //    Assert.AreEqual(CanvasCommandProcessor.ReturnCodes.OK, consoleCommandProcessor.ProcessInputLine("L 1 1 4 1"));
-        //    Assert.AreEqual("------|xxxx||    ||    |------", canvas.DisplayAsString);
-        //    Assert.AreEqual(CanvasCommandProcessor.ReturnCodes.OK, consoleCommandProcessor.ProcessInputLine("L 1 1 1 3"));
-        //    Assert.AreEqual("------|xxxx||x   ||x   |------", canvas.DisplayAsString);
+            // Check can create a canvas
+            Assert.AreEqual(true, testConsoleCommandProcessor.TestInputLine("C 4 3"));
+            Assert.AreEqual(true, testConsoleCommandProcessor.TestInputLine("L 1 1 4 1"));
+            Assert.AreEqual("------|xxxx||    ||    |------", testConsoleCommandProcessor.GetString());
+            Assert.AreEqual(true, testConsoleCommandProcessor.TestInputLine("L 1 1 1 3"));
+            Assert.AreEqual("------|xxxx||x   ||x   |------", testConsoleCommandProcessor.GetString());
 
-        //    // Now check can't add line with bad parameters
-        //    Assert.AreEqual(CanvasCommandProcessor.ReturnCodes.Error, consoleCommandProcessor.ProcessInputLine("L 1 2 2 3"));
-        //    Assert.AreEqual(CanvasCommandProcessor.ReturnCodes.Error, consoleCommandProcessor.ProcessInputLine("L -2 3 4 6"));
-        //    Assert.AreEqual(CanvasCommandProcessor.ReturnCodes.Error, consoleCommandProcessor.ProcessInputLine("L c 1 4 1"));
-        //    Assert.AreEqual(CanvasCommandProcessor.ReturnCodes.Error, consoleCommandProcessor.ProcessInputLine("L 1 1 4 1 4"));
-        //    Assert.AreEqual(CanvasCommandProcessor.ReturnCodes.Error, consoleCommandProcessor.ProcessInputLine("L 1 2 3 4"));
-        //    Assert.AreEqual(CanvasCommandProcessor.ReturnCodes.Error, consoleCommandProcessor.ProcessInputLine("L 1 1 10 1"));
-        //}
+            // Now check can't add line with bad parameters
+            Assert.AreEqual(false, testConsoleCommandProcessor.TestInputLine("L 1 2 2 3"));
+            Assert.AreEqual(false, testConsoleCommandProcessor.TestInputLine("L -2 3 4 6"));
+            Assert.AreEqual(false, testConsoleCommandProcessor.TestInputLine("L c 1 4 1"));
+            Assert.AreEqual(false, testConsoleCommandProcessor.TestInputLine("L 1 1 4 1 4"));
+            Assert.AreEqual(false, testConsoleCommandProcessor.TestInputLine("L 1 2 3 4"));
+            Assert.AreEqual(false, testConsoleCommandProcessor.TestInputLine("L 1 1 10 1"));
+        }
 
-        //[TestMethod]
-        //public void TestAddingRectangle()
-        //{
-        //    TestCanvas canvas = new TestCanvas();
-        //    ConsoleCanvasCommandProcessor consoleCommandProcessor = new ConsoleCanvasCommandProcessor(canvas);
+        [TestMethod]
+        public void TestAddingRectangle()
+        {
+            TestConsoleCommandProcessor testConsoleCommandProcessor = new TestConsoleCommandProcessor();
 
-        //    // Check can create a canvas
-        //    Assert.AreEqual(CanvasCommandProcessor.ReturnCodes.OK, consoleCommandProcessor.ProcessInputLine("C 4 4"));
-        //    Assert.AreEqual(CanvasCommandProcessor.ReturnCodes.OK, consoleCommandProcessor.ProcessInputLine("R 2 2 3 3"));
-        //    Assert.AreEqual("------|    || xx || xx ||    |------", canvas.DisplayAsString);
+            // Check can create a canvas
+            Assert.AreEqual(true, testConsoleCommandProcessor.TestInputLine("C 4 4"));
+            Assert.AreEqual(true, testConsoleCommandProcessor.TestInputLine("R 2 2 3 3"));
+            Assert.AreEqual("------|    || xx || xx ||    |------", testConsoleCommandProcessor.GetString());
 
-        //    // Now check can't add rectangle with bad parameters
-        //    Assert.AreEqual(CanvasCommandProcessor.ReturnCodes.Error, consoleCommandProcessor.ProcessInputLine("R 2 2 5 5"));
-        //    Assert.AreEqual(CanvasCommandProcessor.ReturnCodes.Error, consoleCommandProcessor.ProcessInputLine("R -2 2 3 3"));
-        //    Assert.AreEqual(CanvasCommandProcessor.ReturnCodes.Error, consoleCommandProcessor.ProcessInputLine("R 0 1 4 1"));
-        //    Assert.AreEqual(CanvasCommandProcessor.ReturnCodes.Error, consoleCommandProcessor.ProcessInputLine("R 1 1 4 1 4"));
-        //    Assert.AreEqual(CanvasCommandProcessor.ReturnCodes.Error, consoleCommandProcessor.ProcessInputLine("R 1 2 6 4"));
-        //}
+            // Now check can't add rectangle with bad parameters
+            Assert.AreEqual(false, testConsoleCommandProcessor.TestInputLine("R 2 2 5 5"));
+            Assert.AreEqual(false, testConsoleCommandProcessor.TestInputLine("R -2 2 3 3"));
+            Assert.AreEqual(false, testConsoleCommandProcessor.TestInputLine("R 0 1 4 1"));
+            Assert.AreEqual(false, testConsoleCommandProcessor.TestInputLine("R 1 1 4 1 4"));
+            Assert.AreEqual(false, testConsoleCommandProcessor.TestInputLine("R 1 2 6 4"));
+        }
 
-        //[TestMethod]
-        //public void TestFillingCanvas()
-        //{
-        //    TestCanvas canvas = new TestCanvas();
-        //    ConsoleCanvasCommandProcessor consoleCommandProcessor = new ConsoleCanvasCommandProcessor(canvas);
+        [TestMethod]
+        public void TestFillingCanvas()
+        {
+            TestConsoleCommandProcessor testConsoleCommandProcessor = new TestConsoleCommandProcessor();
 
-        //    // Check can create a canvas
-        //    Assert.AreEqual(CanvasCommandProcessor.ReturnCodes.OK, consoleCommandProcessor.ProcessInputLine("C 4 4"));
-        //    Assert.AreEqual(CanvasCommandProcessor.ReturnCodes.OK, consoleCommandProcessor.ProcessInputLine("R 2 2 3 3"));
-        //    Assert.AreEqual(CanvasCommandProcessor.ReturnCodes.OK, consoleCommandProcessor.ProcessInputLine("B 1 1 W"));
-        //    Assert.AreEqual("------|WWWW||WxxW||WxxW||WWWW|------", canvas.DisplayAsString);
+            // Check can create a canvas
+            Assert.AreEqual(true, testConsoleCommandProcessor.TestInputLine("C 4 4"));
+            Assert.AreEqual(true, testConsoleCommandProcessor.TestInputLine("R 2 2 3 3"));
+            Assert.AreEqual(true, testConsoleCommandProcessor.TestInputLine("B 1 1 W"));
+            Assert.AreEqual("------|WWWW||WxxW||WxxW||WWWW|------", testConsoleCommandProcessor.GetString());
 
-        //    // Now check can't add rectangle with bad parameters
-        //    Assert.AreEqual(CanvasCommandProcessor.ReturnCodes.Error, consoleCommandProcessor.ProcessInputLine("B 1 1 WW"));
-        //    Assert.AreEqual(CanvasCommandProcessor.ReturnCodes.Error, consoleCommandProcessor.ProcessInputLine("B -2 1 W"));
-        //    Assert.AreEqual(CanvasCommandProcessor.ReturnCodes.Error, consoleCommandProcessor.ProcessInputLine("B 0 1 W"));
-        //    Assert.AreEqual(CanvasCommandProcessor.ReturnCodes.Error, consoleCommandProcessor.ProcessInputLine("B 1 1 W 2"));
-        //    Assert.AreEqual(CanvasCommandProcessor.ReturnCodes.Error, consoleCommandProcessor.ProcessInputLine("B W 1 1"));
-        //}
+            // Now check can't add rectangle with bad parameters
+            Assert.AreEqual(false, testConsoleCommandProcessor.TestInputLine("B 1 1 WW"));
+            Assert.AreEqual(false, testConsoleCommandProcessor.TestInputLine("B -2 1 W"));
+            Assert.AreEqual(false, testConsoleCommandProcessor.TestInputLine("B 0 1 W"));
+            Assert.AreEqual(false, testConsoleCommandProcessor.TestInputLine("B 1 1 W 2"));
+            Assert.AreEqual(false, testConsoleCommandProcessor.TestInputLine("B W 1 1"));
+        }
 
-        //[TestMethod]
-        //public void TestInvalidCommands()
-        //{
-        //    ConsoleCanvas canvas = new ConsoleCanvas();
-        //    ConsoleCanvasCommandProcessor consoleCommandProcessor = new ConsoleCanvasCommandProcessor(canvas);
+        [TestMethod]
+        public void TestInvalidCommands()
+        {
+            TestConsoleCommandProcessor testConsoleCommandProcessor = new TestConsoleCommandProcessor();
 
-        //    // Check can create a canvas
-        //    Assert.AreEqual(CanvasCommandProcessor.ReturnCodes.Error, consoleCommandProcessor.ProcessInputLine("c 4 3"));
-        //    Assert.AreEqual(CanvasCommandProcessor.ReturnCodes.Error, consoleCommandProcessor.ProcessInputLine("l 1 1 4 1"));
-        //    Assert.AreEqual(CanvasCommandProcessor.ReturnCodes.Error, consoleCommandProcessor.ProcessInputLine("q"));
-        //    Assert.AreEqual(CanvasCommandProcessor.ReturnCodes.Error, consoleCommandProcessor.ProcessInputLine("F 1 1 1 1"));
-        //}
+            // Check can create a canvas
+            Assert.AreEqual(false, testConsoleCommandProcessor.TestInputLine("c 4 3"));
+            Assert.AreEqual(false, testConsoleCommandProcessor.TestInputLine("l 1 1 4 1"));
+            Assert.AreEqual(false, testConsoleCommandProcessor.TestInputLine("q"));
+            Assert.AreEqual(false, testConsoleCommandProcessor.TestInputLine("F 1 1 1 1"));
+        }
 
-        //[TestMethod]
-        //public void EndToEndTest()
-        //{
-        //    TestCanvas canvas = new TestCanvas();
-        //    ConsoleCanvasCommandProcessor consoleCommandProcessor = new ConsoleCanvasCommandProcessor(canvas);
+        [TestMethod]
+        public void EndToEndTest()
+        {
+            TestConsoleCommandProcessor testConsoleCommandProcessor = new TestConsoleCommandProcessor();
 
-        //    // Check can create a canvas
-        //    Assert.AreEqual(CanvasCommandProcessor.ReturnCodes.OK, consoleCommandProcessor.ProcessInputLine("C 20 4"));
-        //    Assert.AreEqual("----------------------|                    ||                    ||                    ||                    |----------------------", canvas.DisplayAsString);
+            Assert.AreEqual(true, testConsoleCommandProcessor.TestInputLine("C 20 4"));
+            Assert.AreEqual("----------------------|                    ||                    ||                    ||                    |----------------------", testConsoleCommandProcessor.GetString());
 
-        //    Assert.AreEqual(CanvasCommandProcessor.ReturnCodes.OK, consoleCommandProcessor.ProcessInputLine("L 1 2 6 2"));
-        //    Assert.AreEqual("----------------------|                    ||xxxxxx              ||                    ||                    |----------------------", canvas.DisplayAsString);
+            Assert.AreEqual(true, testConsoleCommandProcessor.TestInputLine("L 1 2 6 2"));
+            Assert.AreEqual("----------------------|                    ||xxxxxx              ||                    ||                    |----------------------", testConsoleCommandProcessor.GetString());
 
-        //    Assert.AreEqual(CanvasCommandProcessor.ReturnCodes.OK, consoleCommandProcessor.ProcessInputLine("L 6 3 6 4"));
-        //    Assert.AreEqual("----------------------|                    ||xxxxxx              ||     x              ||     x              |----------------------", canvas.DisplayAsString);
+            Assert.AreEqual(true, testConsoleCommandProcessor.TestInputLine("L 6 3 6 4"));
+            Assert.AreEqual("----------------------|                    ||xxxxxx              ||     x              ||     x              |----------------------", testConsoleCommandProcessor.GetString());
 
-        //    Assert.AreEqual(CanvasCommandProcessor.ReturnCodes.OK, consoleCommandProcessor.ProcessInputLine("R 16 1 20 3"));
-        //    Assert.AreEqual("----------------------|               xxxxx||xxxxxx         x   x||     x         xxxxx||     x              |----------------------", canvas.DisplayAsString);
+            Assert.AreEqual(true, testConsoleCommandProcessor.TestInputLine("R 16 1 20 3"));
+            Assert.AreEqual("----------------------|               xxxxx||xxxxxx         x   x||     x         xxxxx||     x              |----------------------", testConsoleCommandProcessor.GetString());
 
-        //    Assert.AreEqual(CanvasCommandProcessor.ReturnCodes.OK, consoleCommandProcessor.ProcessInputLine("B 10 3 o"));
-        //    Assert.AreEqual("----------------------|oooooooooooooooxxxxx||xxxxxxooooooooox   x||     xoooooooooxxxxx||     xoooooooooooooo|----------------------", canvas.DisplayAsString);
+            Assert.AreEqual(true, testConsoleCommandProcessor.TestInputLine("B 10 3 o"));
+            Assert.AreEqual("----------------------|oooooooooooooooxxxxx||xxxxxxooooooooox   x||     xoooooooooxxxxx||     xoooooooooooooo|----------------------", testConsoleCommandProcessor.GetString());
 
-        //    Assert.AreEqual(CanvasCommandProcessor.ReturnCodes.Stop, consoleCommandProcessor.ProcessInputLine("Q"));
-        //}
+        }
     }
 }
