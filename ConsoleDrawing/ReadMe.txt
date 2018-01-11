@@ -83,21 +83,21 @@ When creating an instance of ConsoleCanvasCommandProcessor, an instance of Canva
 flexibility in how the canvas is displayed to the user.  For this program, it is displayed directly on the console but
 even though the input is via a console, Display() could be implemented for writing out to a file, for example.
 
+As all the commands go through the ExecuteCommand() method of Canvas, the command history can be saved in this method if required.
+
 For testing purposes, TestCanvas is subclassed off of Canvas to display the string that is created for rendering 
 purposes.  This string can be tested against the expected string to ensure the Canvas class is working correctly.
 
+It was decided to store the shapes directly on the canvas (which is actually a 2x2 array) rather than storing them as shapes.
+This simplifies the drawing and the algorithm for the filling.  This does mean some memory will need to be allocated even
+though it isn't being used as the canvas will be mainly blank in the early stages.  This is not an issue For canvases that can be displayed
+on the size of a console.  This may not be the best stragegy for very large canvases.
 
-Large canvas size?
-Command history - could be big
 Random mode running commands
 Complex shapes
-Min size
-Clear canvas
+
 CanvasCommand can hold a list of commands in the correct order
 
-Two level of commands, the first the ConsoleCanvasCommandProcessor can deal with, Q(uit), ?(Usage), D(isplay).
+Two level of commands, the first the ConsoleCanvasCommandProcessor can deal with, Q(uit), ?(Usage).
 All other commands are forwarded to the Canvas calls to deal with
 
-
-To Do
-1. Delete CanvasCommandProcessor, replaced with ConsoleCanvasCommandProcessor

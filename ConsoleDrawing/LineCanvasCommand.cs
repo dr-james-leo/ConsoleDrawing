@@ -10,6 +10,8 @@ namespace ConsoleDrawing
 {
     public class LineCanvasCommand : CanvasCommand
     {
+        protected const int _minLength = 2; // A line must be at least 2 pixels long
+
         public LineCanvasCommand()
         {
         }
@@ -29,16 +31,28 @@ namespace ConsoleDrawing
             get{ return 5; }
         }
 
-        // Return true is successful and false on error
-        protected bool AddHorizontalLine(int x, int y, int length, int colourKey)
+        private bool isLineLongEnough(int length)
+        {
+            if (length < _minLength)
+            {
+                _errorString = "Line must be at least " + _minLength + " long.";
+                return false;
+            }
+            else
+                return true;
+        }
+
+    // Return true is successful and false on error
+    protected bool AddHorizontalLine(int x, int y, int length, int colourKey)
         {
             _errorString = "";
 
             try
             {
-                if (!areXAndYWithinBounds(x, y))
+                if (!areXAndYWithinBounds(x, y) || !isLineLongEnough(length))
                     return false;
 
+                
                 if ((x + length - 1) > _canvas.CanvasWidth)
                 {
                     _errorString = "Length of line too long.";
@@ -66,7 +80,7 @@ namespace ConsoleDrawing
 
             try
             {
-                if (!areXAndYWithinBounds(x, y))
+                if (!areXAndYWithinBounds(x, y) || !isLineLongEnough(length))
                     return false;
 
                 if ((y + length - 1) > _canvas.CanvasHeight)
@@ -78,9 +92,7 @@ namespace ConsoleDrawing
                 int[,] canvasData = _canvas.CanvasData;
 
                 for (int j = 0; j < length; j++)
-                {
                     canvasData[x - 1, y - 1 + j] = colourKey;
-                }
 
                 return true;
             }
@@ -144,11 +156,12 @@ namespace ConsoleDrawing
                     int x = x1;
                     if (x1 > x2)
                         x = x2;
+
                     length = Math.Abs(x2 - x1) + 1;
-                    if (!AddHorizontalLine(x, y1, length, colourKey))
-                    {
+                    
+
+                    if (!AddHorizontalLine(x, y1, length, colourKey))                       
                         return false;
-                    }
                 }
                 else
                 {
@@ -158,10 +171,10 @@ namespace ConsoleDrawing
                         if (y1 > y2)
                             y = y2;
                         length = Math.Abs(y2 - y1) + 1;
+                        
+
                         if (!AddVerticalLine(x1, y, length, colourKey))
-                        {
                             return false;
-                        }
                     }
                     else
                     {
