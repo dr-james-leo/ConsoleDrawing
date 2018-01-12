@@ -9,11 +9,7 @@ using System.Collections;
 namespace ConsoleDrawing
 {
     public class RectangleCanvasCommand : LineCanvasCommand
-    {
-        public RectangleCanvasCommand()
-        {
-        }
-
+    {      
         public override char SupportedCommand
         {
             get { return 'R'; }

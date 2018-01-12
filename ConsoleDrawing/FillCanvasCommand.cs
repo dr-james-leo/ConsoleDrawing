@@ -10,10 +10,6 @@ namespace ConsoleDrawing
 {
     public class FillCanvasCommand: CanvasCommand
     {
-        public FillCanvasCommand()
-        {
-        }
-
         private int _spaceColourKey;
         private int _canvasWidth;
         private int _canvasHeight;

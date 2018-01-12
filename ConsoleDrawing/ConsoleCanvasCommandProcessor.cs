@@ -53,7 +53,7 @@ namespace ConsoleDrawing
                     return true;
                 }
 
-                char mainCommand = fullCommand.First<char>();
+                char mainCommand = char.ToUpper(fullCommand.First<char>());
 
                 switch (mainCommand)
                 {

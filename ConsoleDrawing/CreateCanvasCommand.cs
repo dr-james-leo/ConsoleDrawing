@@ -11,10 +11,6 @@ namespace ConsoleDrawing
 {
     public class CreateCanvasCommand : CanvasCommand
     {
-        public CreateCanvasCommand()
-        {
-        }
-
         public override char SupportedCommand
         {
             get { return 'C'; }

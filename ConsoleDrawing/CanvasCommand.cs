@@ -13,10 +13,6 @@ namespace ConsoleDrawing
         protected string _errorString = "";
         protected Canvas _canvas;
         
-        public CanvasCommand()
-        {
-        }
-
         public void SetCanvas(Canvas canvas)
         {
             _canvas = canvas;

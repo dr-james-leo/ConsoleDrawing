@@ -169,7 +169,7 @@ namespace ConsoleDrawing
 
             try
             {
-                char mainCommand = fullCommand.First<char>();
+                char mainCommand = char.ToUpper(fullCommand.First<char>());
 
                 CanvasCommand canvasCommand = (CanvasCommand)_commandList[mainCommand];
                 if (canvasCommand == null)

@@ -11,11 +11,7 @@ namespace ConsoleDrawing
     public class LineCanvasCommand : CanvasCommand
     {
         protected const int _minLength = 2; // A line must be at least 2 pixels long
-
-        public LineCanvasCommand()
-        {
-        }
-
+        
         public override char SupportedCommand
         {
             get { return 'L'; }
