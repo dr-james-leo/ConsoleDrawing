@@ -11,8 +11,8 @@ namespace ConsoleDrawing
     {
         static void Main(string[] args)
         {
-            ConsoleCanvasCommandProcessor myInputProcessor = new ConsoleCanvasCommandProcessor();
-            myInputProcessor.ProcessInputs();
+            ConsoleCanvasCommandProcessor inputProcessor = new ConsoleCanvasCommandProcessor();
+            inputProcessor.ProcessInputs();
         }
     }
 }

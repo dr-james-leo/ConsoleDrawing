@@ -26,109 +26,49 @@ namespace ConsoleDrawing
         }
 
         // Return true is successful and false on error
-        public override bool ProcessCommand(string fullCommand)
+        public override void ProcessCommand(string fullCommand)
         {
-            _errorString = "";
+            if (!_canvas.HasCanvasBeenCreated())
+                throw new CommandException("Please create a canvas first.");
 
-            try
-            {
-                if (!_canvas.HasCanvasBeenCreated())
-                {
-                    _errorString = "Please create a canvas first.";
-                    return false;
-                }
+            string[] elements = GetParameters(fullCommand);
 
-                string[] elements = GetParameters(fullCommand);
-                if (elements == null)
-                    return false;
+            int x1;
+            if (!int.TryParse(elements[1], out x1))
+                throw new CommandException("First parameter must be an integer specifying x1.");
 
-                int x1;
-                if (!int.TryParse(elements[1], out x1))
-                {
-                    _errorString = "First parameter must be an integer specifying x1.";
-                    return false;
-                }
+            int y1;
+            if (!int.TryParse(elements[2], out y1))
+                throw new CommandException("Second parameter must be an integer specifying y1.");
 
-                int y1;
-                if (!int.TryParse(elements[2], out y1))
-                {
-                    _errorString = "Second parameter must be an integer specifying y1.";
-                    return false;
-                }
+            int x2;
+            if (!int.TryParse(elements[3], out x2))
+                throw new CommandException("Third parameter must be an integer specifying x2.");
 
-                int x2;
-                if (!int.TryParse(elements[3], out x2))
-                {
-                    _errorString = "First parameter must be an integer specifying x2.";
-                    return false;
-                }
+            int y2;
+            if (!int.TryParse(elements[4], out y2))
+                throw new CommandException("Fourth parameter must be an integer specifying y2.");
 
-                int y2;
-                if (!int.TryParse(elements[4], out y2))
-                {
-                    _errorString = "Second parameter must be an integer specifying y2.";
-                    return false;
-                }
+            if (x2 < x1)
+                throw new CommandException("x2 must be greater than x1.");          
 
-                if (x2 < x1)
-                {
-                    _errorString = "x2 must be greater than x1.";
-                    return false;
-                }
+            if (y2 < y1)
+                throw new CommandException("y2 must be greater than y1.");
+           
+            int colourKey = _canvas.GetColourKeyFor('x');
 
-                if (y2 < y1)
-                {
-                    _errorString = "y2 must be greater than y1.";
-                    return false;
-                }
-
-                int colourKey = _canvas.GetColourKeyFor('x');
-
-                int rectangleWidth = x2 - x1 + 1;
-                int rectangleHeight = y2 - y1 + 1;
-                if (!AddRectangle(x1, y1, rectangleWidth, rectangleHeight, colourKey))
-                {
-                    return false;
-                }
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                _errorString = "An error ocurred: " + ex.Message;
-                return true;
-            }
+            int rectangleWidth = x2 - x1 + 1;
+            int rectangleHeight = y2 - y1 + 1;
+            AddRectangle(x1, y1, rectangleWidth, rectangleHeight, colourKey);            
         }
 
         // Return true is successful and false on error
-        public bool AddRectangle(int x, int y, int width, int height, int colourKey)
-        {
-            _errorString = "";
-
-            try
-            {
-                if (!areXAndYWithinBounds(x, y))
-                    return false;
-
-                if (!AddHorizontalLine(x, y, width, colourKey))
-                    return false;
-
-                if (!AddVerticalLine(x, y, height, colourKey))
-                    return false;
-
-                if (!AddVerticalLine(x + width - 1, y, height, colourKey))
-                    return false;
-
-                if (!AddHorizontalLine(x, y + height - 1, width, colourKey))
-                    return false;
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                _errorString = "An error ocurred: " + ex.Message;
-                return false;
-            }
+        public void AddRectangle(int x, int y, int width, int height, int colourKey)
+        {          
+            AddHorizontalLine(x, y, width, colourKey);
+            AddVerticalLine(x, y, height, colourKey);
+            AddVerticalLine(x + width - 1, y, height, colourKey);
+            AddHorizontalLine(x, y + height - 1, width, colourKey);  
         }
 
     }

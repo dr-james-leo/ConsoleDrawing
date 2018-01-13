@@ -14,17 +14,6 @@ namespace ConsoleDrawing
         public ConsoleCanvasCommandProcessor()
         {
             _canvas = new Canvas();
-            CreateCanvasCommand createCanvasCommand = new CreateCanvasCommand();
-            _canvas.AddNewCommand(createCanvasCommand);
-
-            LineCanvasCommand lineCanvasCommand = new LineCanvasCommand();
-            _canvas.AddNewCommand(lineCanvasCommand);
-
-            RectangleCanvasCommand rectangleCanvasCommand = new RectangleCanvasCommand();
-            _canvas.AddNewCommand(rectangleCanvasCommand);
-
-            FillCanvasCommand fillCanvasCommand = new FillCanvasCommand();
-            _canvas.AddNewCommand(fillCanvasCommand);
         }
 
         public void ProcessInputs()
@@ -65,25 +54,23 @@ namespace ConsoleDrawing
                         break;
 
                     default:
-                        if (_canvas.ExecuteCommand(fullCommand))
-                        {
+                        _canvas.ExecuteCommand(fullCommand);
+                        
                             string displayString = _canvas.RenderToString("\n");
                             if (displayString.Length > 0)
                                 Console.WriteLine(displayString);
-                            else
-                                Console.WriteLine(_canvas.Error);
-                        }
-                        else
-                        {
-                            Console.WriteLine(_canvas.Error);
-                        }
-
+                           
+                        
                         break;
                 }
             }
+            catch(CommandException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
             catch (Exception ex)
             {
-                Console.WriteLine("An error ocurred: " + ex.Message);
+                Console.WriteLine("An unknown error ocurred: " + ex.Message);
             }
 
             return true;

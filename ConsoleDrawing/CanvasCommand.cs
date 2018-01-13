@@ -20,7 +20,7 @@ namespace ConsoleDrawing
 
         abstract public char SupportedCommand { get; }
         abstract public string Usage { get; }
-        abstract public bool ProcessCommand(string fullCommand);
+        abstract public void ProcessCommand(string fullCommand);
         abstract public int NumberOfParameters { get; }
 
         public string Error
@@ -29,54 +29,28 @@ namespace ConsoleDrawing
         }
 
         // Checks the values of x and y are within the canvas space
-        // Return true is successful and false on error
-        protected bool areXAndYWithinBounds(int x, int y)
+        protected void CheckXAndYWithinBounds(int x, int y)
         {
-
             if (x < 1 || x > _canvas.CanvasWidth)
-            {
-                _errorString = "x must be between 1 and " + _canvas.CanvasWidth + ".";
-                return false;
-            }
+                throw new CommandException("x must be between 1 and " + _canvas.CanvasWidth + ".");
 
             if (y < 1 || y > _canvas.CanvasHeight)
-            {
-                _errorString = "y must be between 1 and " + _canvas.CanvasHeight + ".";
-                return false;
-            }
-
-            return true;
+                throw new CommandException("y must be between 1 and " + _canvas.CanvasHeight + ".");
         }
 
         // Returns parameters as array if ok or null if not
         protected string[] GetParameters(string fullCommand)
         {
-            _errorString = "";
+            string pattern = @"\s+";
+            string[] elements = Regex.Split(fullCommand, pattern);
 
-            try
-            {
-                string pattern = @"\s+";
-                string[] elements = Regex.Split(fullCommand, pattern);
-
-                if (elements.Length < NumberOfParameters)
-                {
-                    _errorString = "Too few parameters. Usage is " + Usage + ".";
-                    return null;
-                }
-
-                if (elements.Length > NumberOfParameters)
-                {
-                    _errorString = "Too many parameters. Usage is " + Usage + ".";
-                    return null;
-                }
-
-                return elements;
-            }
-            catch (Exception ex)
-            {
-                _errorString = "An error ocurred: " + ex.Message;
-                return null;
-            }
+            if (elements.Length < NumberOfParameters)
+                throw new CommandException("Too few parameters. Usage is " + Usage + ".");
+                
+            if (elements.Length > NumberOfParameters)
+                throw new CommandException("Too many parameters. Usage is " + Usage + ".");
+               
+            return elements;           
         }
     }
 }

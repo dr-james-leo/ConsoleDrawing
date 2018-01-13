@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="Canvas.cs" />
     <Compile Include="CanvasCommand.cs" />
+    <Compile Include="CommandException.cs" />
     <Compile Include="ConsoleCanvasCommandProcessor.cs" />
     <Compile Include="CreateCanvasCommand.cs" />
     <Compile Include="FillCanvasCommand.cs" />

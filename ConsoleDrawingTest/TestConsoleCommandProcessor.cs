@@ -12,7 +12,8 @@ namespace ConsoleDrawingTest
     {
         public bool TestInputLine(string fullCommand)
         {
-            return _canvas.ExecuteCommand(fullCommand);
+            _canvas.ExecuteCommand(fullCommand);
+            return true;
         }
 
         public string GetString()

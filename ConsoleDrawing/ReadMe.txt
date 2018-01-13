@@ -98,6 +98,11 @@ Complex shapes
 
 CanvasCommand can hold a list of commands in the correct order
 
+Only reference to Console is in ConsoleCanvasCommandProcessor so that the rest of the classes are resuable in a different environment, for example on the web.
+
 Two level of commands, the first the ConsoleCanvasCommandProcessor can deal with, Q(uit), ?(Usage).
 All other commands are forwarded to the Canvas calls to deal with
 
+1. replace Hashtable with Dictionary
+2. Use execeptions, 2 or 3 difference
+3. Locator.GetType in instansiate.

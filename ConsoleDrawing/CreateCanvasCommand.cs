@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using System.Collections;
 
-
 namespace ConsoleDrawing
 {
     public class CreateCanvasCommand : CanvasCommand
@@ -27,63 +26,31 @@ namespace ConsoleDrawing
         }
 
         // Return true is successful and false on error
-        public override bool ProcessCommand(string fullCommand)
+        public override void ProcessCommand(string fullCommand)
         {
-            _errorString = "";
+            string[] elements = GetParameters(fullCommand);
 
-            try
-            {
-                string[] elements = GetParameters(fullCommand);
-                if (elements == null)
-                    return false;
+            int requestedWidth;
+            if (!int.TryParse(elements[1], out requestedWidth))
+                throw new CommandException("First parameter must be an integer specifying the width.");
+           
+            if (requestedWidth < 1)
+                throw new CommandException("Width of canvas must be at least 1.");
 
-                int requestedWidth;
-                if (!int.TryParse(elements[1], out requestedWidth))
-                {
-                    _errorString = "First parameter must be an integer specifying the width.";
-                    return false;
-                }
+            int requestedHeight;
+            if (!int.TryParse(elements[2], out requestedHeight))
+                throw new CommandException("Second parameter must be an integer specifying the height.");
+            
+            if (requestedHeight < 1)
+                throw new CommandException("Height of canvas must be at least 1.");            
 
-                if (requestedWidth < 1)
-                {
-                    _errorString = "Width of canvas must be at least 1.";
-                    return false;
-                }
-
-                int requestedHeight;
-                if (!int.TryParse(elements[2], out requestedHeight))
-                {
-                    _errorString = "Second parameter must be an integer specifying the height.";
-                    return false;
-                }
-
-                if (requestedHeight < 1)
-                {
-                    _errorString = "Height of canvas must be at least 1.";
-                    return false;
-                }
-
-                if (requestedHeight > _canvas.MaxHeight)
-                {
-                    _errorString = "Maximum height of " + _canvas.MaxHeight + " exceeded.";
-                    return false;
-                }
-
-                if (requestedWidth > _canvas.MaxWidth)
-                {
-                    _errorString = "Maximum width of " + _canvas.MaxWidth + " exceeded.";
-                    return false;
-                }
-
-                _canvas.RefreshCanvasData(requestedWidth, requestedHeight);
-                
-                return true;
-            }
-            catch (Exception ex)
-            {
-                _errorString = "An error ocurred: " + ex.Message;
-                return false;
-            }
+            if (requestedHeight > _canvas.MaxHeight)
+                throw new CommandException("Maximum height of " + _canvas.MaxHeight + " exceeded.");
+            
+            if (requestedWidth > _canvas.MaxWidth)
+                throw new CommandException("Maximum width of " + _canvas.MaxWidth + " exceeded.");
+           
+            _canvas.RefreshCanvasData(requestedWidth, requestedHeight);            
         }
     }
 }
