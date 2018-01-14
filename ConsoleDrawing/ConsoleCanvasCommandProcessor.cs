@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace ConsoleDrawing
 {
+    // Reads inputs from the console and passes them onto the canvas for processing.
+    // If the user types Q then quits the program
+    // If the user type ? then displays the support commands
     public class ConsoleCanvasCommandProcessor
     {
         protected Canvas _canvas;
@@ -54,13 +57,8 @@ namespace ConsoleDrawing
                         break;
 
                     default:
-                        _canvas.ExecuteCommand(fullCommand);
-                        
-                            string displayString = _canvas.RenderToString("\n");
-                            if (displayString.Length > 0)
-                                Console.WriteLine(displayString);
-                           
-                        
+                        _canvas.ExecuteCommand(fullCommand);                       
+                        Console.WriteLine(_canvas.ToString("\n"));
                         break;
                 }
             }

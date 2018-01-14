@@ -9,11 +9,12 @@ using System.Threading.Tasks;
 
 namespace ConsoleDrawing
 {
+    // If an error occurs then throws exceptions of type CommandException
     public class Canvas
     {
         private int[,] _canvasData; // Holds the data specifying the drawings on the canvas
-        private Dictionary<int, char> _colourList; // maps colours to integers for filling the canvas
-        private Dictionary<char, CanvasCommand> _commandList = new Dictionary<char, CanvasCommand>(); // supported commands
+        private Dictionary<int, char> _colourList; // maps colours to integers for draawing on the canvas
+        private Dictionary<char, CanvasCommand> _commandList = new Dictionary<char, CanvasCommand>(); // list of supported commands
         
         // Parameters with defaults
         private char _spaceChar = ' ';
@@ -22,9 +23,6 @@ namespace ConsoleDrawing
         private char _leftAndRightEdgeChar = '|';
         private int _maxWidth = 1000;
         private int _maxHeight = 1000;
-        
-        // Gets set if any method errors
-        protected string _errorString = "";
 
         public Canvas()
         {
@@ -61,6 +59,7 @@ namespace ConsoleDrawing
             get { return _lineChar; }
         }
 
+        // Looks for all Classes in the current assembly which inherit from CanvasCommand, instantiates them and adds them to the list of supported commands
         public void LoadSupportedCommands()
         {        
             Assembly assembly = Assembly.GetExecutingAssembly();
@@ -76,6 +75,7 @@ namespace ConsoleDrawing
             }
         }
 
+        // Either creates a canvas for the first time or resets all the data
         public void RefreshCanvasData(int requiredWidth, int requiredHeight)
         {
             _canvasData = new int[requiredWidth, requiredHeight];
@@ -149,11 +149,7 @@ namespace ConsoleDrawing
             }
         }
         
-        public string Error
-        {
-            get { return _errorString; }
-        }
-        
+        // Important method because additional commands can be supported by including new subclasses of CanvasCommand
         public string GetUsage(string newLineChar)
         {
             StringBuilder usageString = new StringBuilder("");
@@ -181,53 +177,39 @@ namespace ConsoleDrawing
                 throw new CommandException(fullCommand + " is an unrecognised command.");
         }
 
-        // Returns an empty string on error and sets _errorString;
-        public string RenderToString(string newLineChar)
+        public string ToString(string newLineChar)
         {
-            _errorString = "";
+            if (!HasCanvasBeenCreated())
+                throw new CommandException("Please create a canvas first.");
 
-            try
+            StringBuilder displayString = new StringBuilder("");
+
+            // Render the top line
+            for (int i = 0; i < CanvasWidth + 2; i++)
+                displayString.Append(_topAndBottomEdgeChar);
+
+            displayString.Append(newLineChar);
+
+            // Render the canvas data
+            for (int j = 0; j < CanvasHeight; j++)
             {
-                if (!HasCanvasBeenCreated())
+                displayString.Append(_leftAndRightEdgeChar);
+
+                for (int i = 0; i < CanvasWidth; i++)
                 {
-                    _errorString = "Please create a canvas first.";
-                    return "";
+                    char colour = _colourList[_canvasData[i, j]];
+                    displayString.Append(colour);                       
                 }
 
-                StringBuilder displayString = new StringBuilder("");
-
-                // Render the top line
-                for (int i = 0; i < CanvasWidth + 2; i++)
-                    displayString.Append(_topAndBottomEdgeChar);
-
+                displayString.Append(_leftAndRightEdgeChar);
                 displayString.Append(newLineChar);
-
-                // Render the canvas data
-                for (int j = 0; j < CanvasHeight; j++)
-                {
-                    displayString.Append(_leftAndRightEdgeChar);
-
-                    for (int i = 0; i < CanvasWidth; i++)
-                    {
-                        char colour = _colourList[_canvasData[i, j]];
-                        displayString.Append(colour);                       
-                    }
-
-                    displayString.Append(_leftAndRightEdgeChar);
-                    displayString.Append(newLineChar);
-                }
-
-                // Render the bottom line
-                for (int i = 0; i < CanvasWidth + 2; i++)
-                    displayString.Append(_topAndBottomEdgeChar);
-
-                return displayString.ToString();
             }
-            catch(Exception ex)
-            {
-                _errorString = "An error ocurred: " + ex.Message;
-                return "";
-            }          
+
+            // Render the bottom line
+            for (int i = 0; i < CanvasWidth + 2; i++)
+                displayString.Append(_topAndBottomEdgeChar);
+
+            return displayString.ToString();         
         }
     }
 }

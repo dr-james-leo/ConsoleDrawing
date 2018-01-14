@@ -8,6 +8,7 @@ using System.Collections;
 
 namespace ConsoleDrawing
 {
+    // Used to create a canvas of a specified height and width
     public class CreateCanvasCommand : CanvasCommand
     {
         public override char SupportedCommand
@@ -25,7 +26,6 @@ namespace ConsoleDrawing
             get { return 3; }
         }
 
-        // Return true is successful and false on error
         public override void ProcessCommand(string fullCommand)
         {
             string[] elements = GetParameters(fullCommand);

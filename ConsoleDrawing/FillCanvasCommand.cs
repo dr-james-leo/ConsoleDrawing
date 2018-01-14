@@ -8,7 +8,7 @@ using System.Collections;
 
 namespace ConsoleDrawing
 {
-    //[CanvasCommand]
+    // Fills area of the canvas with different colours
     public class FillCanvasCommand: CanvasCommand
     {
         private int _spaceColourKey;
@@ -32,7 +32,6 @@ namespace ConsoleDrawing
             get { return 4; }
         }
 
-        // Return true is successful and false on error
         public override void ProcessCommand(string fullCommand)
         {          
             if (!_canvas.HasCanvasBeenCreated())

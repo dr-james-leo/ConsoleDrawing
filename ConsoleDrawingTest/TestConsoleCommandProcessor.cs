@@ -5,20 +5,37 @@ using System.Text;
 using System.Threading.Tasks;
 using ConsoleDrawing;
 
-
 namespace ConsoleDrawingTest
 {
-    class TestConsoleCommandProcessor : ConsoleCanvasCommandProcessor
+    public class TestConsoleCommandProcessor
     {
+        protected Canvas _canvas;
+
+        public TestConsoleCommandProcessor()
+        {
+            _canvas = new Canvas();
+        }
+
         public bool TestInputLine(string fullCommand)
         {
-            _canvas.ExecuteCommand(fullCommand);
-            return true;
+            try
+            {
+                _canvas.ExecuteCommand(fullCommand);
+                return true;
+            }
+            catch (CommandException ex)
+            {
+                return false;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
         }
 
         public string GetString()
         {
-            return _canvas.RenderToString("");
+            return _canvas.ToString("");
         }
     }
 }

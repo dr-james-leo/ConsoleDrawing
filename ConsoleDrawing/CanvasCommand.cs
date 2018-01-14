@@ -8,9 +8,9 @@ using System.Collections;
 
 namespace ConsoleDrawing
 {
+    // Abstract base class for implementing commands on the canvas, for example drawing shapes
     abstract public class CanvasCommand
     {
-        protected string _errorString = "";
         protected Canvas _canvas;
         
         public void SetCanvas(Canvas canvas)
@@ -23,11 +23,6 @@ namespace ConsoleDrawing
         abstract public void ProcessCommand(string fullCommand);
         abstract public int NumberOfParameters { get; }
 
-        public string Error
-        {
-            get { return _errorString; }
-        }
-
         // Checks the values of x and y are within the canvas space
         protected void CheckXAndYWithinBounds(int x, int y)
         {
@@ -38,7 +33,7 @@ namespace ConsoleDrawing
                 throw new CommandException("y must be between 1 and " + _canvas.CanvasHeight + ".");
         }
 
-        // Returns parameters as array if ok or null if not
+        // Returns parameters as an array of strings as long the number of parameters is correct
         protected string[] GetParameters(string fullCommand)
         {
             string pattern = @"\s+";

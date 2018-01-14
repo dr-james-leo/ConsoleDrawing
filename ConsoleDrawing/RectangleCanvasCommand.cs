@@ -8,6 +8,7 @@ using System.Collections;
 
 namespace ConsoleDrawing
 {
+    // draws rectangles
     public class RectangleCanvasCommand : LineCanvasCommand
     {      
         public override char SupportedCommand
@@ -25,7 +26,6 @@ namespace ConsoleDrawing
             get { return 5; }
         }
 
-        // Return true is successful and false on error
         public override void ProcessCommand(string fullCommand)
         {
             if (!_canvas.HasCanvasBeenCreated())
@@ -62,7 +62,6 @@ namespace ConsoleDrawing
             AddRectangle(x1, y1, rectangleWidth, rectangleHeight, colourKey);            
         }
 
-        // Return true is successful and false on error
         public void AddRectangle(int x, int y, int width, int height, int colourKey)
         {          
             AddHorizontalLine(x, y, width, colourKey);
@@ -70,6 +69,5 @@ namespace ConsoleDrawing
             AddVerticalLine(x + width - 1, y, height, colourKey);
             AddHorizontalLine(x, y + height - 1, width, colourKey);  
         }
-
     }
 }

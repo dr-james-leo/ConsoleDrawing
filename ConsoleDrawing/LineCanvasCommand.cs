@@ -8,6 +8,7 @@ using System.Collections;
 
 namespace ConsoleDrawing
 {
+    // Draws vertical and horizontal lines
     public class LineCanvasCommand : CanvasCommand
     {
         protected const int _minLength = 2; // A line must be at least 2 pixels long
@@ -114,6 +115,5 @@ namespace ConsoleDrawing
                 }
             }                 
         }
-
     }
 }

@@ -5,6 +5,8 @@ This program is used to drawing lines and rectangles on the console.
 
 Run from the console by executing the command "ConsoleDrawing.exe".
 
+Type '?' to see the usage.
+
 First create a canvas of the specified width w and height h using the command 'C w h'.
 
 Note that for the following commands, x specifies the horizontal axis and goes from 1 to w where 1 is the left most point.
@@ -23,86 +25,31 @@ The command 'B x y c' is used to fill areas starting at the point (x, y) with th
               
 The command 'Q' quits the program.
 
-Below is a sample run of the program:
-
-enter command: C 20 4
-----------------------
-|                    |
-|                    |
-|                    |
-|                    |
-----------------------
-
-enter command: L 1 2 6 2
-----------------------
-|                    |
-|xxxxxx              |
-|                    |
-|                    |
-----------------------
-
-enter command: L 6 3 6 4
-----------------------
-|                    |
-|xxxxxx              |
-|     x              |
-|     x              |
-----------------------
-
-enter command: R 16 1 20 3
-----------------------
-|               xxxxx|
-|xxxxxx         x   x|
-|     x         xxxxx|
-|     x              |
-----------------------
-
-enter command: B 10 3 o
-----------------------
-|oooooooooooooooxxxxx|
-|xxxxxxooooooooox   x|
-|     xoooooooooxxxxx|
-|     xoooooooooooooo|
-----------------------
-
 
 Design
 ======
 
-The program is comprised of 2 main classes.  
+The brief was to write a simple program that is extensible. Extensible because of the phrase "At this time, the functionality
+of the program is quite limited but this might change in the future" and "At the moment, the program should support the following 
+commands".  I therefore created the abstract base class CanvasCommand from which classes which implement different commands
+inherit from.  The 4 commands, 'C', 'L', 'R' and 'B' are implemented in CreateCanvasCommand, LineCanvasCommand, RectangleCanvasCommand
+and FillCanvasCommand.  
 
-CanvasCommandProcessor is used to process the command entered by the user to create a canvas, draw lines, rectangles and
-fill in spaces.  It is an abstract class and needs to be subclassed so that ProcessInputs() can be implemented.
-The implementation of ProcessInputs() will depend on the interaction with the user. 
-ConsoleCanvasCommandProcessor is used for interacting with a user via the console.
+The Canvas class is used for managing the CanvasCommand classes and the canvas data.  If a new command is required to be implemented 
+then a new class needs to be created inheriting from CanvasCommand.
+No change to the existing code is required because all the CanvasCommand classes are loaded up dynamically at runtime in the method
+LoadSupportedCommands().  The handy GetUsage() method can be run to find the supported commands.
 
-The other class is Canvas which is used for managing the canvas the user is drawing.  Again it is an abstract class
-because the Display() method depends on the view being used.  ConsoleCanvas is a subclass for displaying on a console.
-
-When creating an instance of ConsoleCanvasCommandProcessor, an instance of Canvas need to be injected.  This gives
-flexibility in how the canvas is displayed to the user.  For this program, it is displayed directly on the console but
-even though the input is via a console, Display() could be implemented for writing out to a file, for example.
-
-As all the commands go through the ExecuteCommand() method of Canvas, the command history can be saved in this method if required.
-
-For testing purposes, TestCanvas is subclassed off of Canvas to display the string that is created for rendering 
-purposes.  This string can be tested against the expected string to ensure the Canvas class is working correctly.
-
-It was decided to store the shapes directly on the canvas (which is actually a 2x2 array) rather than storing them as shapes.
+It was decided to store the shapes directly on the canvas (which is actually a 2x2 array of integers) rather than storing them as shapes.
 This simplifies the drawing and the algorithm for the filling.  This does mean some memory will need to be allocated even
 though it isn't being used as the canvas will be mainly blank in the early stages.  This is not an issue For canvases that can be displayed
-on the size of a console.  This may not be the best stragegy for very large canvases.
+on the size of a console.  This may not be the best stragegy for very large canvases. There is therefore a trade off between simplicity and efficient 
+use of memory. The focus for this program is simplicity.
 
-Random mode running commands
-Complex shapes
+Although this program is targeted for use as a console application, the only reference to the console is in ConsoleCanvasCommandProcessor.
+This allows reusability of the canvas functionality in another environment like the web.
 
-CanvasCommand can hold a list of commands in the correct order
+Tests
+=====
 
-Only reference to Console is in ConsoleCanvasCommandProcessor so that the rest of the classes are resuable in a different environment, for example on the web.
-
-Two level of commands, the first the ConsoleCanvasCommandProcessor can deal with, Q(uit), ?(Usage).
-All other commands are forwarded to the Canvas calls to deal with
-
-1. replace Hashtable with Dictionary
-2. Use execeptions, 2 or 3 difference
-3. Locator.GetType in instansiate.
+For testing purposes, the TestConsoleCommandProcessor class is used to execute commands on Canvas and to display the canvas.

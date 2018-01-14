@@ -91,9 +91,9 @@ namespace ConsoleDrawingTest
             TestConsoleCommandProcessor testConsoleCommandProcessor = new TestConsoleCommandProcessor();
 
             // Check can create a canvas
-            Assert.AreEqual(false, testConsoleCommandProcessor.TestInputLine("c 4 3"));
-            Assert.AreEqual(false, testConsoleCommandProcessor.TestInputLine("l 1 1 4 1"));
-            Assert.AreEqual(false, testConsoleCommandProcessor.TestInputLine("q"));
+            Assert.AreEqual(false, testConsoleCommandProcessor.TestInputLine("t 4 3"));
+            Assert.AreEqual(false, testConsoleCommandProcessor.TestInputLine("p 1 1 4 1"));
+            Assert.AreEqual(false, testConsoleCommandProcessor.TestInputLine("W"));
             Assert.AreEqual(false, testConsoleCommandProcessor.TestInputLine("F 1 1 1 1"));
         }
 
