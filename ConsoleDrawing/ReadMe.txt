@@ -1,11 +1,11 @@
 ﻿Console Drawing Program
 =======================
 
-This program is used to drawing lines and rectangles on the console.
+This program is used for drawing lines and rectangles on the console.
 
 Run from the console by executing the command "ConsoleDrawing.exe".
 
-Type '?' to see the usage.
+Type '?' to see the usage of available commands.
 
 First create a canvas of the specified width w and height h using the command 'C w h'.
 
@@ -30,10 +30,10 @@ Design
 ======
 
 The brief was to write a simple program that is extensible. Extensible because of the phrase "At this time, the functionality
-of the program is quite limited but this might change in the future" and "At the moment, the program should support the following 
-commands".  I therefore created the abstract base class CanvasCommand from which classes which implement different commands
-inherit from.  The 4 commands, 'C', 'L', 'R' and 'B' are implemented in CreateCanvasCommand, LineCanvasCommand, RectangleCanvasCommand
-and FillCanvasCommand.  
+of the program is quite limited but this might change in the future".  I therefore created the abstract base class CanvasCommand
+from which classes which implement different commands inherit from.  
+The 4 commands, 'C', 'L', 'R' and 'B' are implemented in CreateCanvasCommand, LineCanvasCommand, RectangleCanvasCommand
+and FillCanvasCommand respectively.  
 
 The Canvas class is used for managing the CanvasCommand classes and the canvas data.  If a new command is required to be implemented 
 then a new class needs to be created inheriting from CanvasCommand.
